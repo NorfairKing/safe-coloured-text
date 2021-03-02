@@ -11,3 +11,41 @@
 * As few dependencies as possible.
 * Well-tested
 * British spelling (because I can)
+
+## Few dependencies
+
+Only `bytestring`, `text` and `terminfo`.
+If the `terminfo` dependency ever gets us into trouble, we can factor it out as well.
+
+## Well-tested
+
+The `safe-coloured-text` library already has over 10'000 tests.
+Most of them are golden tests, and ensure that the output stays correct even if the library changes.
+
+## Minimal output
+
+These two strings look the same, but the second is almost twice as long:
+
+`safe-coloured-text`:
+```
+\ESC[34mTests:\ESC[m
+
+
+
+
+  Passed:                   \ESC[32m0\ESC[m
+  Failed:                   \ESC[32m0\ESC[m
+  Test suite took  \ESC[33m         0.00 seconds\ESC[m
+```
+`rainbow`:
+```
+\ESC[0m\ESC[38;5;4mTests:\ESC[0m
+\ESC[0m\ESC[0m
+\ESC[0m\ESC[0m
+\ESC[0m\ESC[0m
+\ESC[0m\ESC[0m
+\ESC[0m  \ESC[0m\ESC[0mPassed:                   \ESC[0m\ESC[0m\ESC[38;5;2m0\ESC[0m
+\ESC[0m  \ESC[0m\ESC[0mFailed:                   \ESC[0m\ESC[0m\ESC[38;5;2m0\ESC[0m
+\ESC[0m  \ESC[0m\ESC[0mTest suite took  \ESC[0m\ESC[0m\ESC[38;5;3m         0.00 seconds\ESC[0m
+\ESC[0m\ESC[0m
+```
