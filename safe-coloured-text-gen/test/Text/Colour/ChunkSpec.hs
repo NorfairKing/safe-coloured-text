@@ -1,3 +1,4 @@
+{-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE RecordWildCards #-}
 
@@ -9,6 +10,7 @@ import Data.List
 import qualified Data.Text as T
 import Test.Syd
 import Text.Colour.Chunk
+import Text.Colour.Code
 
 spec :: Spec
 spec = do
@@ -22,6 +24,9 @@ spec = do
                 intensity <- [minBound .. maxBound]
                 pure $ Colour intensity terminalColour
           let mColour = Nothing : map Just colour
+          chunkItalic <- Nothing : map Just [minBound .. maxBound]
+          chunkConsoleIntensity <- Nothing : map Just [minBound .. maxBound]
+          chunkUnderlining <- Nothing : map Just [minBound .. maxBound]
           chunkForeground <- mColour
           chunkBackground <- mColour
           let chunkText = T.pack string
@@ -29,12 +34,61 @@ spec = do
               mColourName :: Maybe Colour -> String
               mColourName Nothing = "no"
               mColourName (Just c) = "a " <> colourName c
-              name = unwords [string, "with", mColourName chunkForeground, "foreground on", mColourName chunkBackground, "background"]
+              italicName i = if i then "non-italic" else "italic"
+              consoleIntensityName :: ConsoleIntensity -> String
+              consoleIntensityName = \case
+                BoldIntensity -> "bold"
+                FaintIntensity -> "faint"
+                NormalIntensity -> "non-bold"
+              underliningName :: Underlining -> String
+              underliningName = \case
+                SingleUnderline -> "underline"
+                DoubleUnderline -> "double underline"
+                NoUnderline -> "no underline"
+              name =
+                unwords $
+                  filter
+                    (not . null)
+                    [ maybe "" italicName chunkItalic,
+                      maybe "" consoleIntensityName chunkConsoleIntensity,
+                      maybe "" underliningName chunkUnderlining,
+                      string,
+                      "with",
+                      mColourName chunkForeground,
+                      "foreground on",
+                      mColourName chunkBackground,
+                      "background"
+                    ]
               colourPath (Colour i tc) = map Char.toLower $ intercalate "-" [show i, show tc]
               mColourPath :: Maybe Colour -> FilePath
               mColourPath Nothing = "no"
               mColourPath (Just c) = colourPath c
-              path = intercalate "-" [mColourPath chunkForeground, "fg", mColourPath chunkBackground, "bg"] <> ".dat"
+              italicPath i = if i then "non-italic" else "italic"
+              consoleIntensityPath :: ConsoleIntensity -> FilePath
+              consoleIntensityPath = \case
+                BoldIntensity -> "bold"
+                FaintIntensity -> "faint"
+                NormalIntensity -> "non-bold"
+              underliningPath :: Underlining -> FilePath
+              underliningPath = \case
+                SingleUnderline -> "underline"
+                DoubleUnderline -> "double-underline"
+                NoUnderline -> "no-underline"
+              path =
+                intercalate
+                  "-"
+                  ( filter
+                      (not . null)
+                      [ maybe "" italicPath chunkItalic,
+                        maybe "" consoleIntensityPath chunkConsoleIntensity,
+                        maybe "" underliningPath chunkUnderlining,
+                        mColourPath chunkForeground,
+                        "fg",
+                        mColourPath chunkBackground,
+                        "bg"
+                      ]
+                  )
+                  <> ".dat"
           pure (name, path, Chunk {..})
 
     forM_ (chunks "Hello world") $ \(name, path, c) ->

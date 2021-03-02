@@ -6,12 +6,16 @@ import Data.ByteString (ByteString)
 import Data.ByteString.Builder (Builder)
 import qualified Data.ByteString.Builder as SBB
 import qualified Data.ByteString.Lazy as LB
+import Data.Maybe
 import Data.Text (Text)
 import qualified Data.Text.Encoding as TE
 import Text.Colour.Code
 
 data Chunk = Chunk
   { chunkText :: !Text,
+    chunkItalic :: !(Maybe Bool),
+    chunkConsoleIntensity :: !(Maybe ConsoleIntensity),
+    chunkUnderlining :: !(Maybe Underlining),
     chunkForeground :: !(Maybe Colour),
     chunkBackground :: !(Maybe Colour)
   }
@@ -32,16 +36,24 @@ renderChunk c@Chunk {..} =
 
 chunkSGRs :: Chunk -> [SGR]
 chunkSGRs Chunk {..} =
-  concat
-    [ mColour Foreground chunkForeground,
-      mColour Background chunkBackground
+  catMaybes
+    [ SetItalic <$> chunkItalic,
+      SetUnderlining <$> chunkUnderlining,
+      SetConsoleIntensity <$> chunkConsoleIntensity,
+      colourSGR Foreground <$> chunkForeground,
+      colourSGR Background <$> chunkBackground
     ]
-  where
-    mColour _ Nothing = []
-    mColour layer (Just c) = [colourSGR layer c]
 
 chunk :: Text -> Chunk
-chunk t = Chunk {chunkText = t, chunkForeground = Nothing, chunkBackground = Nothing}
+chunk t =
+  Chunk
+    { chunkText = t,
+      chunkItalic = Nothing,
+      chunkConsoleIntensity = Nothing,
+      chunkUnderlining = Nothing,
+      chunkForeground = Nothing,
+      chunkBackground = Nothing
+    }
 
 fore :: Colour -> Chunk -> Chunk
 fore col chu = chu {chunkForeground = Just col}
