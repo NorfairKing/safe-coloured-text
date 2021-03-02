@@ -7,6 +7,7 @@
 * Represent chunks of coloured text purely
 * Be able to print chunks of coloured text quickly
 * Be able to turn chunks of coloured text into non-coloured text for when terminals don't support (certain) colours.
+* (Ideally) output minimal amounts of overhead
 * As few dependencies as possible.
 * Well-tested
 * British spelling (because I can)
