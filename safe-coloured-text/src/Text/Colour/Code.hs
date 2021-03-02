@@ -40,7 +40,7 @@ renderCSI = \case
     mconcat
       [ SBB.word8 asciiEscape,
         SBB.word8 csiStart,
-        foldMap csiParamsToWords $ map sgrToCSIParams sgrs,
+        csiParamsToWords $ concatMap sgrToCSIParams sgrs,
         SBB.word8 (SBI.c2w 'm')
       ]
 
