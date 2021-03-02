@@ -23,19 +23,35 @@ data Chunk = Chunk
 -- | Render a chunk directly to bytestring.
 -- You probably want to use 'renderChunk' instead.
 -- This is just for testing.
-renderChunkBS :: Chunk -> ByteString
-renderChunkBS = LB.toStrict . SBB.toLazyByteString . renderChunk
+renderChunkWithColourBS :: Chunk -> ByteString
+renderChunkWithColourBS = LB.toStrict . SBB.toLazyByteString . renderChunkWithColour
 
-renderChunk :: Chunk -> Builder
-renderChunk c@Chunk {..} =
+renderChunkWithColour :: Chunk -> Builder
+renderChunkWithColour c@Chunk {..} =
   mconcat
-    [ renderCSI (SGR $ chunkSGRs c),
+    [ renderCSI (SGR $ chunkSGRWithColours c),
       SBB.byteString (TE.encodeUtf8 chunkText),
       renderCSI (SGR [Reset])
     ]
 
-chunkSGRs :: Chunk -> [SGR]
-chunkSGRs Chunk {..} =
+renderChunkWithoutColour :: Chunk -> Builder
+renderChunkWithoutColour c@Chunk {..} =
+  mconcat
+    [ renderCSI (SGR $ chunkSGRWithoutColours c),
+      SBB.byteString (TE.encodeUtf8 chunkText),
+      renderCSI (SGR [Reset])
+    ]
+
+chunkSGRWithoutColours :: Chunk -> [SGR]
+chunkSGRWithoutColours Chunk {..} =
+  catMaybes
+    [ SetItalic <$> chunkItalic,
+      SetUnderlining <$> chunkUnderlining,
+      SetConsoleIntensity <$> chunkConsoleIntensity
+    ]
+
+chunkSGRWithColours :: Chunk -> [SGR]
+chunkSGRWithColours Chunk {..} =
   catMaybes
     [ SetItalic <$> chunkItalic,
       SetUnderlining <$> chunkUnderlining,
@@ -60,6 +76,15 @@ fore col chu = chu {chunkForeground = Just col}
 
 back :: Colour -> Chunk -> Chunk
 back col chu = chu {chunkBackground = Just col}
+
+faint :: Chunk -> Chunk
+faint chu = chu {chunkConsoleIntensity = Just FaintIntensity}
+
+italic :: Chunk -> Chunk
+italic chu = chu {chunkItalic = Just True}
+
+underline :: Chunk -> Chunk
+underline chu = chu {chunkUnderlining = Just SingleUnderline}
 
 data Colour = Colour
   { colourIntensity :: ColourIntensity,
