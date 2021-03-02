@@ -2,7 +2,54 @@
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
-module Text.Colour where
+module Text.Colour
+  ( -- * Building chunks
+    Chunk (..),
+    chunk,
+    fore,
+    back,
+
+    -- ** Styling
+    bold,
+    faint,
+    italic,
+    underline,
+
+    -- ** Colours
+    Colour (..),
+    black,
+    red,
+    green,
+    yellow,
+    blue,
+    magenta,
+    cyan,
+    white,
+    brightBlack,
+    brightRed,
+    brightGreen,
+    brightYellow,
+    brightBlue,
+    brightMagenta,
+    brightCyan,
+    brightWhite,
+
+    -- * IO
+    TerminalCapabilities (..),
+    getTerminalCapabilitiesFromEnv,
+    getTerminalCapabilitiesFromHandle,
+
+    -- ** Rendering chunks to bytestring builders
+    renderChunks,
+    renderChunk,
+
+    -- ** Outputting chunks directly
+    putChunks,
+    hPutChunks,
+    putChunksWith,
+    hPutChunksWith,
+  )
+where
 
 import Control.Exception
 import Data.ByteString.Builder (Builder)

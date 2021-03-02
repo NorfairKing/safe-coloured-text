@@ -1,3 +1,4 @@
+{-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE RecordWildCards #-}
 
 module Text.Colour.Chunk where
@@ -7,8 +8,10 @@ import Data.ByteString.Builder (Builder)
 import qualified Data.ByteString.Builder as SBB
 import qualified Data.ByteString.Lazy as LB
 import Data.Maybe
+import Data.String
 import Data.Text (Text)
 import qualified Data.Text.Encoding as TE
+import GHC.Generics (Generic)
 import Text.Colour.Code
 
 data Chunk = Chunk
@@ -19,6 +22,20 @@ data Chunk = Chunk
     chunkForeground :: !(Maybe Colour),
     chunkBackground :: !(Maybe Colour)
   }
+  deriving (Show, Eq, Generic)
+
+instance IsString Chunk where
+  fromString = chunk . fromString
+
+plainChunk :: Chunk -> Bool
+plainChunk Chunk {..} =
+  and
+    [ isNothing chunkItalic,
+      isNothing chunkConsoleIntensity,
+      isNothing chunkUnderlining,
+      isNothing chunkForeground,
+      isNothing chunkBackground
+    ]
 
 -- | Render a chunk directly to bytestring.
 -- You probably want to use 'renderChunk' instead.
@@ -28,19 +45,25 @@ renderChunkWithColourBS = LB.toStrict . SBB.toLazyByteString . renderChunkWithCo
 
 renderChunkWithColour :: Chunk -> Builder
 renderChunkWithColour c@Chunk {..} =
-  mconcat
-    [ renderCSI (SGR $ chunkSGRWithColours c),
-      SBB.byteString (TE.encodeUtf8 chunkText),
-      renderCSI (SGR [Reset])
-    ]
+  if plainChunk c
+    then SBB.byteString (TE.encodeUtf8 chunkText)
+    else
+      mconcat
+        [ renderCSI (SGR $ chunkSGRWithColours c),
+          SBB.byteString (TE.encodeUtf8 chunkText),
+          renderCSI (SGR [Reset])
+        ]
 
 renderChunkWithoutColour :: Chunk -> Builder
 renderChunkWithoutColour c@Chunk {..} =
-  mconcat
-    [ renderCSI (SGR $ chunkSGRWithoutColours c),
-      SBB.byteString (TE.encodeUtf8 chunkText),
-      renderCSI (SGR [Reset])
-    ]
+  if plainChunk c
+    then SBB.byteString (TE.encodeUtf8 chunkText)
+    else
+      mconcat
+        [ renderCSI (SGR $ chunkSGRWithoutColours c),
+          SBB.byteString (TE.encodeUtf8 chunkText),
+          renderCSI (SGR [Reset])
+        ]
 
 chunkSGRWithoutColours :: Chunk -> [SGR]
 chunkSGRWithoutColours Chunk {..} =
@@ -77,6 +100,9 @@ fore col chu = chu {chunkForeground = Just col}
 back :: Colour -> Chunk -> Chunk
 back col chu = chu {chunkBackground = Just col}
 
+bold :: Chunk -> Chunk
+bold chu = chu {chunkConsoleIntensity = Just BoldIntensity}
+
 faint :: Chunk -> Chunk
 faint chu = chu {chunkConsoleIntensity = Just FaintIntensity}
 
@@ -90,6 +116,7 @@ data Colour = Colour
   { colourIntensity :: ColourIntensity,
     colourValue :: TerminalColour
   }
+  deriving (Show, Eq, Generic)
 
 colourSGR :: ConsoleLayer -> Colour -> SGR
 colourSGR layer Colour {..} = SetColour colourIntensity layer colourValue
