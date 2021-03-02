@@ -1,4 +1,5 @@
 {-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE RecordWildCards #-}
 
 module Text.Colour.Chunk where
@@ -12,6 +13,7 @@ import Data.String
 import Data.Text (Text)
 import qualified Data.Text.Encoding as TE
 import GHC.Generics (Generic)
+import Text.Colour.Capabilities
 import Text.Colour.Code
 
 data Chunk = Chunk
@@ -37,11 +39,19 @@ plainChunk Chunk {..} =
       isNothing chunkBackground
     ]
 
+renderChunks :: Foldable f => TerminalCapabilities -> f Chunk -> Builder
+renderChunks tc = foldMap (renderChunk tc)
+
 -- | Render a chunk directly to bytestring.
 -- You probably want to use 'renderChunk' instead.
 -- This is just for testing.
-renderChunkWithColourBS :: Chunk -> ByteString
-renderChunkWithColourBS = LB.toStrict . SBB.toLazyByteString . renderChunkWithColour
+renderChunkBS :: TerminalCapabilities -> Chunk -> ByteString
+renderChunkBS tc = LB.toStrict . SBB.toLazyByteString . renderChunk tc
+
+renderChunk :: TerminalCapabilities -> Chunk -> Builder
+renderChunk = \case
+  Colours -> renderChunkWithColour
+  NoColour -> renderChunkWithoutColour
 
 renderChunkWithColour :: Chunk -> Builder
 renderChunkWithColour c@Chunk {..} =
