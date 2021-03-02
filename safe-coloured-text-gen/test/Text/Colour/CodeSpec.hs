@@ -27,7 +27,25 @@ spec = do
           it (unwords ["outputs a", show name, "the same as before"]) $
             pureGoldenByteStringFile (gf path) (renderCSIBS (SGR [sgr]))
       it "outputs an dull red background with bright blue foreground the same as before" $ do
-        pureGoldenByteStringFile (gf "two-colours.dat") (renderCSIBS (SGR [SetColour Dull Background Red, SetColour Bright Foreground Blue]))
-
--- it "outputs an bold, underlined, dull red background with bright blue foreground the same as before" $ do
---     pureGoldenByteStringFile (gf path) (renderCSIBS (SGR []))
+        pureGoldenByteStringFile
+          (gf "two-colours.dat")
+          ( renderCSIBS
+              ( SGR
+                  [ SetColour Dull Background Red,
+                    SetColour Bright Foreground Blue
+                  ]
+              )
+          )
+      it "outputs an bold, italic, underlined, dull yellow background with bright green foreground the same as before" $ do
+        pureGoldenByteStringFile
+          (gf "complex.dat")
+          ( renderCSIBS
+              ( SGR
+                  [ SetItalic True,
+                    SetUnderlining SingleUnderline,
+                    SetConsoleIntensity BoldIntensity,
+                    SetColour Dull Background Yellow,
+                    SetColour Bright Foreground Green
+                  ]
+              )
+          )
