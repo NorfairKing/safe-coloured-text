@@ -26,7 +26,7 @@ data CSI
   = SGR [SGR]
   deriving (Show, Eq, Generic)
 
--- | Render an CSI directly to bytestring.
+-- | Render a CSI directly to bytestring.
 -- You probably want to use 'renderCSI' instead.
 -- This is just for testing.
 renderCSIBS :: CSI -> ByteString
@@ -51,7 +51,7 @@ data SGR
   | SetItalic Bool
   | SetUnderlining Underlining
   | SetConsoleIntensity ConsoleIntensity
-  | SetColour ColorIntensity ConsoleLayer TerminalColour
+  | SetColour ColourIntensity ConsoleLayer TerminalColour
   deriving (Show, Eq, Generic)
 
 csiParamsToWords :: [Word8] -> Builder
@@ -105,13 +105,13 @@ data ConsoleIntensity
   | NormalIntensity
   deriving (Show, Eq, Generic, Bounded, Enum)
 
--- | ANSI's standard colors come in two intensities
-data ColorIntensity
+-- | ANSI's standard colours come in two intensities
+data ColourIntensity
   = Dull
   | Bright
   deriving (Show, Eq, Generic, Enum, Bounded)
 
--- | ANSI colors can be set on two different layers
+-- | ANSI colours can be set on two different layers
 data ConsoleLayer
   = Foreground
   | Background

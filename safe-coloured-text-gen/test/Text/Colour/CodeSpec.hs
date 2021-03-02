@@ -8,7 +8,7 @@ import Text.Colour.Code
 
 spec :: Spec
 spec = do
-  let gf = ("test_resources/" ++)
+  let gf = ("test_resources/csi/" ++)
   describe "renderCSI" $ do
     it "outputs a reset the same as before" $
       pureGoldenByteStringFile (gf "reset.dat") (renderCSIBS (SGR [Reset]))

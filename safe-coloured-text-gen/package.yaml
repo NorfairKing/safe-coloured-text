@@ -23,5 +23,6 @@ tests:
     - -rtsopts
     - -with-rtsopts=-N
     dependencies:
-    - sydtest
     - safe-coloured-text
+    - sydtest
+    - text

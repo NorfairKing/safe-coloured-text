@@ -33,6 +33,7 @@ test-suite safe-coloured-text-gen-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
+      Text.Colour.ChunkSpec
       Text.Colour.CodeSpec
       Paths_safe_coloured_text_gen
   hs-source-dirs:
@@ -44,4 +45,5 @@ test-suite safe-coloured-text-gen-test
       base >=4.7 && <5
     , safe-coloured-text
     , sydtest
+    , text
   default-language: Haskell2010

@@ -13,3 +13,4 @@ library:
   source-dirs: src
   dependencies:
   - bytestring
+  - text
