@@ -21,6 +21,7 @@ source-repository head
 library
   exposed-modules:
       Text.Colour
+      Text.Colour.Capabilities
       Text.Colour.Chunk
       Text.Colour.Code
   other-modules:
