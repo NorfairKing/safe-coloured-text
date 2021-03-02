@@ -26,3 +26,8 @@ spec = do
         forM_ sgrTests $ \(name, path, sgr) ->
           it (unwords ["outputs a", show name, "the same as before"]) $
             pureGoldenByteStringFile (gf path) (renderCSIBS (SGR [sgr]))
+      it "outputs an dull red background with bright blue foreground the same as before" $ do
+        pureGoldenByteStringFile (gf "two-colours.dat") (renderCSIBS (SGR [SetColour Dull Background Red, SetColour Bright Foreground Blue]))
+
+-- it "outputs an bold, underlined, dull red background with bright blue foreground the same as before" $ do
+--     pureGoldenByteStringFile (gf path) (renderCSIBS (SGR []))
