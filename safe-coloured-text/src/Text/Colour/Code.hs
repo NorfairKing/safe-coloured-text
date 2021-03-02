@@ -4,10 +4,8 @@
 module Text.Colour.Code where
 
 import Data.ByteString (ByteString)
-import qualified Data.ByteString as SB
 import Data.ByteString.Builder (Builder)
 import qualified Data.ByteString.Builder as SBB
-import qualified Data.ByteString.Char8 as SB8
 import qualified Data.ByteString.Internal as SBI
 import qualified Data.ByteString.Lazy as LB
 import Data.List
@@ -26,6 +24,7 @@ csiDelimiter = SBI.c2w ';'
 
 data CSI
   = SGR [SGR]
+  deriving (Show, Eq, Generic)
 
 -- | Render an CSI directly to bytestring.
 -- You probably want to use 'renderCSI' instead.
@@ -35,18 +34,23 @@ renderCSIBS = LB.toStrict . SBB.toLazyByteString . renderCSI
 
 -- https://en.wikipedia.org/wiki/ANSI_escape_code#CSI_(Control_Sequence_Introducer)_sequences
 renderCSI :: CSI -> Builder
-renderCSI = \case
-  SGR sgrs ->
-    mconcat
-      [ SBB.word8 asciiEscape,
-        SBB.word8 csiStart,
-        csiParamsToWords $ concatMap sgrToCSIParams sgrs,
-        SBB.word8 (SBI.c2w 'm')
-      ]
+renderCSI =
+  let csi ps c =
+        mconcat
+          [ SBB.word8 asciiEscape,
+            SBB.word8 csiStart,
+            csiParamsToWords ps,
+            SBB.word8 c
+          ]
+   in \case
+        SGR sgrs -> csi (concatMap sgrToCSIParams sgrs) (SBI.c2w 'm')
 
 -- https://en.wikipedia.org/wiki/ANSI_escape_code#SGR_(Select_Graphic_Rendition)_parameters
 data SGR
   = Reset
+  | SetItalic Bool
+  | SetUnderlining Underlining
+  | SetConsoleIntensity ConsoleIntensity
   | SetColour ColorIntensity ConsoleLayer TerminalColour
   deriving (Show, Eq, Generic)
 
@@ -63,6 +67,19 @@ csiParamToWords = SBB.word8Dec
 sgrToCSIParams :: SGR -> [Word8]
 sgrToCSIParams = \case
   Reset -> [] -- [0] would be fine too
+  SetItalic b -> [if b then 3 else 23]
+  SetUnderlining u ->
+    [ case u of
+        SingleUnderline -> 4
+        DoubleUnderline -> 21
+        NoUnderline -> 24
+    ]
+  SetConsoleIntensity ci ->
+    [ case ci of
+        BoldIntensity -> 1
+        FaintIntensity -> 2
+        NormalIntensity -> 22
+    ]
   SetColour i l c ->
     [ case i of
         Dull -> case l of
@@ -72,6 +89,21 @@ sgrToCSIParams = \case
           Foreground -> 90 + terminalColourSGRParameter c
           Background -> 100 + terminalColourSGRParameter c
     ]
+
+-- | ANSI text underlining
+data Underlining
+  = SingleUnderline
+  | DoubleUnderline
+  | NoUnderline
+  deriving (Show, Eq, Generic, Bounded, Enum)
+
+-- | ANSI general console intensity: usually treated as setting the font style
+-- (e.g. 'BoldIntensity' causes text to be bold)
+data ConsoleIntensity
+  = BoldIntensity
+  | FaintIntensity
+  | NormalIntensity
+  deriving (Show, Eq, Generic, Bounded, Enum)
 
 -- | ANSI's standard colors come in two intensities
 data ColorIntensity
