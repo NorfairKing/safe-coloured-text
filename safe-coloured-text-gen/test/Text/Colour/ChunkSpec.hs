@@ -90,12 +90,12 @@ spec = do
       forM_ (chunks "Hello world") $ \(name, path, c) ->
         it (unwords ["outputs a", name, "the same way as before"]) $
           pureGoldenByteStringFile (gf8 path) (renderChunkBS With256Colours c)
-    describe "256 colours" $ do
-      let gf256 = ("test_resources/chunk/256/" ++)
+    describe "8bit colours" $ do
+      let gf8bit = ("test_resources/chunk/8bit/" ++)
       let chunks string = do
             let colour = do
                   w <- (* 16) <$> [0 .. 15] -- Just a few colours, otherwise we end up with 65K files.
-                  pure $ Colour256 w
+                  pure $ Colour8Bit w
             let mColour = Nothing : map Just colour
             let chunkItalic = Nothing
             let chunkConsoleIntensity = Nothing
@@ -124,7 +124,45 @@ spec = do
 
       forM_ (chunks "Hello world") $ \(name, path, c) ->
         it (unwords ["outputs a", name, "the same way as before"]) $
-          pureGoldenByteStringFile (gf256 path) (renderChunkBS With256Colours c)
+          pureGoldenByteStringFile (gf8bit path) (renderChunkBS With256Colours c)
+    describe "24bit colours" $ do
+      let gf24bit = ("test_resources/chunk/24bit/" ++)
+      let chunks string = do
+            let colour = do
+                  let w = [0, 127, 255] -- Just a few colours, otherwise we end up with a boatload of files.
+                  r <- w
+                  g <- w
+                  b <- w
+                  pure $ Colour24Bit r g b
+            let mColour = Nothing : map Just colour
+            let chunkItalic = Nothing
+            let chunkConsoleIntensity = Nothing
+            let chunkUnderlining = Nothing
+            chunkForeground <- mColour
+            chunkBackground <- mColour
+            let chunkText = T.pack string
+            let name =
+                  unwords $
+                    [ mColourName chunkForeground,
+                      "foreground on",
+                      mColourName chunkBackground,
+                      "background"
+                    ]
+                path =
+                  intercalate
+                    "-"
+                    ( [ mColourPath chunkForeground,
+                        "fg",
+                        mColourPath chunkBackground,
+                        "bg"
+                      ]
+                    )
+                    <> ".dat"
+            pure (name, path, Chunk {..})
+
+      forM_ (chunks "Hello world") $ \(name, path, c) ->
+        it (unwords ["outputs a", name, "the same way as before"]) $
+          pureGoldenByteStringFile (gf24bit path) (renderChunkBS With256Colours c)
 
 colourName :: Colour -> String
 colourName =
@@ -133,14 +171,18 @@ colourName =
       [ show intensity,
         show terminalColour
       ]
-    Colour256 w ->
+    Colour8Bit w ->
       [ "8-bit colour",
         show w
+      ]
+    Colour24Bit r g b ->
+      [ "8-bit colour",
+        show (r, g, b)
       ]
 
 mColourName :: Maybe Colour -> String
 mColourName Nothing = "no"
-mColourName (Just c) = "a " <> colourName c
+mColourName (Just c) = "a(n) " <> colourName c
 
 colourPath :: Colour -> FilePath
 colourPath =
@@ -151,7 +193,8 @@ colourPath =
         [ show intensity,
           show terminalColour
         ]
-      Colour256 w -> [show w]
+      Colour8Bit w -> [show w]
+      Colour24Bit r g b -> [show r, show g, show b]
 
 mColourPath :: Maybe Colour -> FilePath
 mColourPath Nothing = "no"

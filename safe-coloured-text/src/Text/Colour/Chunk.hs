@@ -125,8 +125,9 @@ underline :: Chunk -> Chunk
 underline chu = chu {chunkUnderlining = Just SingleUnderline}
 
 data Colour
-  = Colour8 ColourIntensity TerminalColour
-  | Colour256 Word8 -- The 8-bit colour
+  = Colour8 !ColourIntensity !TerminalColour
+  | Colour8Bit !Word8 -- The 8-bit colour
+  | Colour24Bit !Word8 !Word8 !Word8
   deriving (Show, Eq, Generic)
 
 -- TODO consider allowing an 8-colour alternative to a given 256-colour
@@ -134,7 +135,8 @@ data Colour
 colourSGR :: ConsoleLayer -> Colour -> SGR
 colourSGR layer = \case
   Colour8 intensity terminalColour -> SetColour intensity layer terminalColour
-  Colour256 w -> Set8BitColour layer w
+  Colour8Bit w -> Set8BitColour layer w
+  Colour24Bit r g b -> Set24BitColour layer r g b
 
 black :: Colour
 black = Colour8 Dull Black
@@ -183,3 +185,10 @@ brightCyan = Colour8 Bright Cyan
 
 brightWhite :: Colour
 brightWhite = Colour8 Bright White
+
+colour256 :: Word8 -> Colour
+colour256 = Colour8Bit
+
+-- | Bloody americans...
+color256 :: Word8 -> Colour
+color256 = colour256
