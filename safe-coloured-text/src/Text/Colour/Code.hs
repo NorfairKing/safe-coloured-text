@@ -153,3 +153,15 @@ terminalColourSGRParameter = \case
   Magenta -> 5
   Cyan -> 6
   White -> 7
+
+terminalColourFromIndex :: Word8 -> Maybe TerminalColour
+terminalColourFromIndex = \case
+  0 -> Just Black
+  1 -> Just Red
+  2 -> Just Green
+  3 -> Just Yellow
+  4 -> Just Blue
+  5 -> Just Magenta
+  6 -> Just Cyan
+  7 -> Just White
+  _ -> Nothing
