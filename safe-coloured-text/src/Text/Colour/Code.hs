@@ -52,7 +52,7 @@ data SGR
   | SetUnderlining !Underlining
   | SetConsoleIntensity !ConsoleIntensity
   | SetColour !ColourIntensity !ConsoleLayer !TerminalColour
-  | Set8bitColour !ConsoleLayer !Word8
+  | Set8BitColour !ConsoleLayer !Word8
   deriving (Show, Eq, Generic)
 
 csiParamsToWords :: [Word8] -> Builder
@@ -90,7 +90,7 @@ sgrToCSIParams = \case
           Foreground -> 90 + terminalColourSGRParameter c
           Background -> 100 + terminalColourSGRParameter c
     ]
-  Set8bitColour l w ->
+  Set8BitColour l w ->
     [ case l of
         Foreground -> 38
         Background -> 48,

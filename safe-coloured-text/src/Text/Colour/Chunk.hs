@@ -12,6 +12,7 @@ import Data.Maybe
 import Data.String
 import Data.Text (Text)
 import qualified Data.Text.Encoding as TE
+import Data.Word
 import GHC.Generics (Generic)
 import Text.Colour.Capabilities
 import Text.Colour.Code
@@ -123,59 +124,62 @@ italic chu = chu {chunkItalic = Just True}
 underline :: Chunk -> Chunk
 underline chu = chu {chunkUnderlining = Just SingleUnderline}
 
-data Colour = Colour
-  { colourIntensity :: ColourIntensity,
-    colourValue :: TerminalColour
-  }
+data Colour
+  = Colour8 ColourIntensity TerminalColour
+  | Colour256 Word8 -- The 8-bit colour
   deriving (Show, Eq, Generic)
 
+-- TODO consider allowing an 8-colour alternative to a given 256-colour
+
 colourSGR :: ConsoleLayer -> Colour -> SGR
-colourSGR layer Colour {..} = SetColour colourIntensity layer colourValue
+colourSGR layer = \case
+  Colour8 intensity terminalColour -> SetColour intensity layer terminalColour
+  Colour256 w -> Set8BitColour layer w
 
 black :: Colour
-black = Colour Dull Black
+black = Colour8 Dull Black
 
 red :: Colour
-red = Colour Dull Red
+red = Colour8 Dull Red
 
 green :: Colour
-green = Colour Dull Green
+green = Colour8 Dull Green
 
 yellow :: Colour
-yellow = Colour Dull Yellow
+yellow = Colour8 Dull Yellow
 
 blue :: Colour
-blue = Colour Dull Blue
+blue = Colour8 Dull Blue
 
 magenta :: Colour
-magenta = Colour Dull Magenta
+magenta = Colour8 Dull Magenta
 
 cyan :: Colour
-cyan = Colour Dull Cyan
+cyan = Colour8 Dull Cyan
 
 white :: Colour
-white = Colour Dull White
+white = Colour8 Dull White
 
 brightBlack :: Colour
-brightBlack = Colour Bright Black
+brightBlack = Colour8 Bright Black
 
 brightRed :: Colour
-brightRed = Colour Bright Red
+brightRed = Colour8 Bright Red
 
 brightGreen :: Colour
-brightGreen = Colour Bright Green
+brightGreen = Colour8 Bright Green
 
 brightYellow :: Colour
-brightYellow = Colour Bright Yellow
+brightYellow = Colour8 Bright Yellow
 
 brightBlue :: Colour
-brightBlue = Colour Bright Blue
+brightBlue = Colour8 Bright Blue
 
 brightMagenta :: Colour
-brightMagenta = Colour Bright Magenta
+brightMagenta = Colour8 Bright Magenta
 
 brightCyan :: Colour
-brightCyan = Colour Bright Cyan
+brightCyan = Colour8 Bright Cyan
 
 brightWhite :: Colour
-brightWhite = Colour Bright White
+brightWhite = Colour8 Bright White
