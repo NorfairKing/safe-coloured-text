@@ -2,13 +2,11 @@ resolver: lts-15.15
 packages:
 - safe-coloured-text
 - safe-coloured-text-gen
-- /home/syd/src/sydtest/sydtest
-- /home/syd/src/sydtest/sydtest-discover
 extra-deps:
-  # - github: NorfairKing/sydtest
-  #   commit: 2c563d5a819c70aad9f4d4f044cd72880921039b
-  #   subdirs:
-  #   - sydtest
-  #   - sydtest-discover
+- github: NorfairKing/sydtest
+  commit: 2c563d5a819c70aad9f4d4f044cd72880921039b
+  subdirs:
+  - sydtest
+  - sydtest-discover
 - envparse-0.4.1@sha256:989902e6368532548f61de1fa245ad2b39176cddd8743b20071af519a709ce30,2842
 - yamlparse-applicative-0.1.0.2@sha256:bda91f2818c1b5b124963931cb7f9a4e5758d026c09713e9ae2234534062747d,2133
