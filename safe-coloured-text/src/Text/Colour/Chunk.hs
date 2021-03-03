@@ -50,8 +50,9 @@ renderChunkBS tc = LB.toStrict . SBB.toLazyByteString . renderChunk tc
 
 renderChunk :: TerminalCapabilities -> Chunk -> Builder
 renderChunk = \case
-  Colours -> renderChunkWithColour
-  NoColour -> renderChunkWithoutColour
+  With8Colours -> renderChunkWithColour
+  With256Colours -> renderChunkWithColour -- TODO
+  WithoutColours -> renderChunkWithoutColour
 
 renderChunkWithColour :: Chunk -> Builder
 renderChunkWithColour c@Chunk {..} =

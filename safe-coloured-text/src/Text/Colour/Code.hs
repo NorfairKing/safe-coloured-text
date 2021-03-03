@@ -23,7 +23,7 @@ csiDelimiter :: Word8
 csiDelimiter = SBI.c2w ';'
 
 data CSI
-  = SGR [SGR]
+  = SGR ![SGR]
   deriving (Show, Eq, Generic)
 
 -- | Render a CSI directly to bytestring.
@@ -48,10 +48,11 @@ renderCSI =
 -- https://en.wikipedia.org/wiki/ANSI_escape_code#SGR_(Select_Graphic_Rendition)_parameters
 data SGR
   = Reset
-  | SetItalic Bool
-  | SetUnderlining Underlining
-  | SetConsoleIntensity ConsoleIntensity
-  | SetColour ColourIntensity ConsoleLayer TerminalColour
+  | SetItalic !Bool
+  | SetUnderlining !Underlining
+  | SetConsoleIntensity !ConsoleIntensity
+  | SetColour !ColourIntensity !ConsoleLayer !TerminalColour
+  | Set8bitColour !ConsoleLayer !Word8
   deriving (Show, Eq, Generic)
 
 csiParamsToWords :: [Word8] -> Builder
@@ -88,6 +89,13 @@ sgrToCSIParams = \case
         Bright -> case l of
           Foreground -> 90 + terminalColourSGRParameter c
           Background -> 100 + terminalColourSGRParameter c
+    ]
+  Set8bitColour l w ->
+    [ case l of
+        Foreground -> 38
+        Background -> 48,
+      5,
+      w
     ]
 
 -- | ANSI text underlining

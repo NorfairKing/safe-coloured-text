@@ -47,15 +47,10 @@ module Text.Colour
   )
 where
 
-import Control.Exception
-import Data.ByteString.Builder (Builder)
 import qualified Data.ByteString.Builder as SBB
-import GHC.Generics (Generic)
-import qualified System.Console.Terminfo as Terminfo
 import System.IO
 import Text.Colour.Capabilities
 import Text.Colour.Chunk
-import Text.Colour.Code
 
 putChunks :: [Chunk] -> IO ()
 putChunks = hPutChunks stdout

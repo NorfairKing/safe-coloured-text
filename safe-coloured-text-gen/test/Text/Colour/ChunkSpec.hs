@@ -18,7 +18,7 @@ spec = do
   let gf = ("test_resources/chunk/" ++)
   describe "renderChunk" $ do
     it "outputs a plain chunk the same as before" $
-      pureGoldenByteStringFile (gf "plain.dat") (renderChunkBS Colours (chunk "Hello world"))
+      pureGoldenByteStringFile (gf "plain.dat") (renderChunkBS With256Colours (chunk "Hello world"))
     let chunks string = do
           let colour = do
                 terminalColour <- [minBound .. maxBound]
@@ -94,4 +94,4 @@ spec = do
 
     forM_ (chunks "Hello world") $ \(name, path, c) ->
       it (unwords ["outputs a", name, "the same way as before"]) $
-        pureGoldenByteStringFile (gf path) (renderChunkBS Colours c)
+        pureGoldenByteStringFile (gf path) (renderChunkBS With256Colours c)
