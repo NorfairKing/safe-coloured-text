@@ -40,6 +40,12 @@ plainChunk Chunk {..} =
       isNothing chunkBackground
     ]
 
+-- | Render a chunk directly to bytestring.
+-- You probably want to use 'renderChunks' instead.
+-- This is just for testing.
+renderChunksBS :: TerminalCapabilities -> [Chunk] -> ByteString
+renderChunksBS tc = LB.toStrict . SBB.toLazyByteString . renderChunks tc
+
 renderChunks :: Foldable f => TerminalCapabilities -> f Chunk -> Builder
 renderChunks tc = foldMap (renderChunk tc)
 

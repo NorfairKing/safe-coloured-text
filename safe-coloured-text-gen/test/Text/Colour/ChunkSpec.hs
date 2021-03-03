@@ -161,6 +161,31 @@ spec = do
       forM_ (chunks "Hello world") $ \(name, path, c) ->
         it (unwords ["outputs a", name, "the same way as before"]) $
           pureGoldenByteStringFile (gf24bit path) (renderChunkBS With24BitColours c)
+    describe "super fancy" $ do
+      it "outputs this super fancy thing the same way as before" $
+        let bc c = back c $ chunk " "
+
+            colour8Bits = Colour8Bit <$> [16 .. maxBound]
+            colour8Bitss = (Colour8Bit <$> [0 .. 7]) : (Colour8Bit <$> [8 .. 15]) : chunksOf 36 colour8Bits
+            wsWithGaps = [0, 16 .. 255]
+            colour24Bits = (Colour24Bit <$> wsWithGaps <*> wsWithGaps <*> wsWithGaps)
+            colour24Bitss = chunksOf 64 colour24Bits
+            cs =
+              intercalate
+                ["\n"]
+                $ concat
+                  [ [ "Terminal colours (dull):   " : map (bc . Colour8 Dull) [minBound .. maxBound],
+                      "Terminal colours (bright): " : map (bc . Colour8 Bright) [minBound .. maxBound]
+                    ],
+                    ["\n8 bit colours:"] : map (map bc) colour8Bitss,
+                    ["\n24 bit colours:"] : map (map bc) colour24Bitss
+                  ]
+         in pureGoldenByteStringFile (gf "fancy.dat") (renderChunksBS With24BitColours cs)
+
+chunksOf :: Int -> [a] -> [[a]]
+chunksOf w l
+  | length l > w = take w l : chunksOf w (drop w l)
+  | otherwise = [l]
 
 colourName :: Colour -> String
 colourName =
