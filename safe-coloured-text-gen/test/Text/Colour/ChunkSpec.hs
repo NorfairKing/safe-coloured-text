@@ -18,7 +18,7 @@ spec = do
   let gf = ("test_resources/chunk/" ++)
   describe "renderChunk" $ do
     it "outputs a plain chunk the same as before" $
-      pureGoldenByteStringFile (gf "plain.dat") (renderChunkBS With256Colours (chunk "Hello world"))
+      pureGoldenByteStringFile (gf "plain.dat") (renderChunkBS With24BitColours (chunk "Hello world"))
     describe "8 colours" $ do
       let gf8 = ("test_resources/chunk/8/" ++)
       let chunks string = do
@@ -89,7 +89,7 @@ spec = do
 
       forM_ (chunks "Hello world") $ \(name, path, c) ->
         it (unwords ["outputs a", name, "the same way as before"]) $
-          pureGoldenByteStringFile (gf8 path) (renderChunkBS With256Colours c)
+          pureGoldenByteStringFile (gf8 path) (renderChunkBS With24BitColours c)
     describe "8bit colours" $ do
       let gf8bit = ("test_resources/chunk/8bit/" ++)
       let chunks string = do
@@ -124,7 +124,7 @@ spec = do
 
       forM_ (chunks "Hello world") $ \(name, path, c) ->
         it (unwords ["outputs a", name, "the same way as before"]) $
-          pureGoldenByteStringFile (gf8bit path) (renderChunkBS With256Colours c)
+          pureGoldenByteStringFile (gf8bit path) (renderChunkBS With24BitColours c)
     describe "24bit colours" $ do
       let gf24bit = ("test_resources/chunk/24bit/" ++)
       let chunks string = do
@@ -162,7 +162,7 @@ spec = do
 
       forM_ (chunks "Hello world") $ \(name, path, c) ->
         it (unwords ["outputs a", name, "the same way as before"]) $
-          pureGoldenByteStringFile (gf24bit path) (renderChunkBS With256Colours c)
+          pureGoldenByteStringFile (gf24bit path) (renderChunkBS With24BitColours c)
 
 colourName :: Colour -> String
 colourName =

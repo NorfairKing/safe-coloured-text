@@ -50,49 +50,24 @@ renderChunkBS :: TerminalCapabilities -> Chunk -> ByteString
 renderChunkBS tc = LB.toStrict . SBB.toLazyByteString . renderChunk tc
 
 renderChunk :: TerminalCapabilities -> Chunk -> Builder
-renderChunk = \case
-  With8Colours -> renderChunkWithColour
-  With256Colours -> renderChunkWithColour -- TODO
-  WithoutColours -> renderChunkWithoutColour
-
-renderChunkWithColour :: Chunk -> Builder
-renderChunkWithColour c@Chunk {..} =
+renderChunk tc c@Chunk {..} =
   if plainChunk c
     then SBB.byteString (TE.encodeUtf8 chunkText)
     else
       mconcat
-        [ renderCSI (SGR $ chunkSGRWithColours c),
+        [ renderCSI (SGR $ chunkSGR tc c),
           SBB.byteString (TE.encodeUtf8 chunkText),
           renderCSI (SGR [Reset])
         ]
 
-renderChunkWithoutColour :: Chunk -> Builder
-renderChunkWithoutColour c@Chunk {..} =
-  if plainChunk c
-    then SBB.byteString (TE.encodeUtf8 chunkText)
-    else
-      mconcat
-        [ renderCSI (SGR $ chunkSGRWithoutColours c),
-          SBB.byteString (TE.encodeUtf8 chunkText),
-          renderCSI (SGR [Reset])
-        ]
-
-chunkSGRWithoutColours :: Chunk -> [SGR]
-chunkSGRWithoutColours Chunk {..} =
-  catMaybes
-    [ SetItalic <$> chunkItalic,
-      SetUnderlining <$> chunkUnderlining,
-      SetConsoleIntensity <$> chunkConsoleIntensity
-    ]
-
-chunkSGRWithColours :: Chunk -> [SGR]
-chunkSGRWithColours Chunk {..} =
+chunkSGR :: TerminalCapabilities -> Chunk -> [SGR]
+chunkSGR tc Chunk {..} =
   catMaybes
     [ SetItalic <$> chunkItalic,
       SetUnderlining <$> chunkUnderlining,
       SetConsoleIntensity <$> chunkConsoleIntensity,
-      colourSGR Foreground <$> chunkForeground,
-      colourSGR Background <$> chunkBackground
+      chunkForeground >>= colourSGR tc Foreground,
+      chunkBackground >>= colourSGR tc Background
     ]
 
 chunk :: Text -> Chunk
@@ -131,11 +106,13 @@ data Colour
   | Colour24Bit !Word8 !Word8 !Word8
   deriving (Show, Eq, Generic)
 
-colourSGR :: ConsoleLayer -> Colour -> SGR
-colourSGR layer = \case
-  Colour8 intensity terminalColour -> SetColour intensity layer terminalColour
-  Colour8Bit w -> Set8BitColour layer w
-  Colour24Bit r g b -> Set24BitColour layer r g b
+colourSGR :: TerminalCapabilities -> ConsoleLayer -> Colour -> Maybe SGR
+colourSGR tc layer =
+  let cap tc' sgr = if tc >= tc' then Just sgr else Nothing
+   in \case
+        Colour8 intensity terminalColour -> cap With8Colours $ SetColour intensity layer terminalColour
+        Colour8Bit w -> cap With8BitColours $ Set8BitColour layer w
+        Colour24Bit r g b -> cap With24BitColours $ Set24BitColour layer r g b
 
 black :: Colour
 black = Colour8 Dull Black
