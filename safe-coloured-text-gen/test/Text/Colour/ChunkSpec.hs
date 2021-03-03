@@ -104,7 +104,7 @@ spec = do
             chunkBackground <- mColour
             let chunkText = T.pack string
             let name =
-                  unwords $
+                  unwords
                     [ mColourName chunkForeground,
                       "foreground on",
                       mColourName chunkBackground,
@@ -113,12 +113,11 @@ spec = do
                 path =
                   intercalate
                     "-"
-                    ( [ mColourPath chunkForeground,
-                        "fg",
-                        mColourPath chunkBackground,
-                        "bg"
-                      ]
-                    )
+                    [ mColourPath chunkForeground,
+                      "fg",
+                      mColourPath chunkBackground,
+                      "bg"
+                    ]
                     <> ".dat"
             pure (name, path, Chunk {..})
 
@@ -142,7 +141,7 @@ spec = do
             chunkBackground <- mColour
             let chunkText = T.pack string
             let name =
-                  unwords $
+                  unwords
                     [ mColourName chunkForeground,
                       "foreground on",
                       mColourName chunkBackground,
@@ -151,12 +150,11 @@ spec = do
                 path =
                   intercalate
                     "-"
-                    ( [ mColourPath chunkForeground,
-                        "fg",
-                        mColourPath chunkBackground,
-                        "bg"
-                      ]
-                    )
+                    [ mColourPath chunkForeground,
+                      "fg",
+                      mColourPath chunkBackground,
+                      "bg"
+                    ]
                     <> ".dat"
             pure (name, path, Chunk {..})
 

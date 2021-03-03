@@ -1,0 +1,4 @@
+- ignore:
+    name: "Use <$>"
+- ignore:
+    name: "Reduce duplication"
