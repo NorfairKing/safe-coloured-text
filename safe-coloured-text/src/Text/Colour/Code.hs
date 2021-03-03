@@ -22,8 +22,8 @@ csiStart = SBI.c2w '['
 csiDelimiter :: Word8
 csiDelimiter = SBI.c2w ';'
 
-data CSI
-  = SGR ![SGR]
+newtype CSI
+  = SGR [SGR]
   deriving (Show, Eq, Generic)
 
 -- | Render a CSI directly to bytestring.

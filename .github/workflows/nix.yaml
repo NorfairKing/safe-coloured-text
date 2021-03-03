@@ -1,0 +1,47 @@
+name: "Nix Build"
+on:
+  pull_request:
+  push:
+    branches:
+      - development
+      - master
+
+jobs:
+  hooks:
+    name: Pre-commit hooks
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: cachix/install-nix-action@v12
+    - uses: cachix/cachix-action@v8
+      with:
+        name: safe-coloured-text
+        extraPullNames: sydtest
+        signingKey: '${{ secrets.CACHIX_SIGNING_KEY }}'
+    - run: nix-build ci.nix -A pre-commit-check
+
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          - macos-latest
+        lts:
+          - lts-15_03
+          - lts-16_11
+          - lts-16_20
+          - release
+
+    name: CI Build
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: cachix/install-nix-action@v12
+    - uses: cachix/cachix-action@v8
+      with:
+        name: safe-coloured-text
+        extraPullNames: sydtest
+        signingKey: '${{ secrets.CACHIX_SIGNING_KEY }}'
+    - run: nix-build ci.nix -A ${{ matrix.lts }}
+

@@ -1,5 +1,4 @@
 {-# LANGUAGE DeriveGeneric #-}
-{-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
 module Text.Colour.Capabilities where
@@ -21,7 +20,7 @@ getTerminalCapabilitiesFromEnv :: IO TerminalCapabilities
 getTerminalCapabilitiesFromEnv = do
   mTerm <- (Just <$> Terminfo.setupTermFromEnv) `catch` (\(_ :: Terminfo.SetupTermError) -> pure Nothing)
   case mTerm of
-    Nothing -> pure $ WithoutColours
+    Nothing -> pure WithoutColours
     Just term -> do
       -- To support 24-bit colour:
       -- https://unix.stackexchange.com/questions/450365/check-if-terminal-supports-24-bit-true-color
