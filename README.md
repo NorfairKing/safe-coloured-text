@@ -49,3 +49,5 @@ These two strings look the same, but the second is almost twice as long:
 \ESC[0m  \ESC[0m\ESC[0mTest suite took  \ESC[0m\ESC[0m\ESC[38;5;3m         0.00 seconds\ESC[0m
 \ESC[0m\ESC[0m
 ```
+
+The `safe-coloured-text` does not emit sequences if a chunk is completely plain, but it does not deal with inter-chunk inefficiencies.
