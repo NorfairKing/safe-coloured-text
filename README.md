@@ -51,3 +51,8 @@ These two strings look the same, but the second is almost twice as long:
 ```
 
 The `safe-coloured-text` does not emit sequences if a chunk is completely plain, but it does not deal with inter-chunk inefficiencies.
+
+## Supports 24-bit colour
+
+This library supports outputting sequences for 24-bit colours.
+My `urxvt` terminal emulator doesn't even support that, so whatever, but at least it's possible.

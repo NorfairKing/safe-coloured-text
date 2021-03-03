@@ -124,13 +124,12 @@ italic chu = chu {chunkItalic = Just True}
 underline :: Chunk -> Chunk
 underline chu = chu {chunkUnderlining = Just SingleUnderline}
 
+-- TODO consider allowing an 8-colour alternative to a given 256-colour
 data Colour
   = Colour8 !ColourIntensity !TerminalColour
   | Colour8Bit !Word8 -- The 8-bit colour
   | Colour24Bit !Word8 !Word8 !Word8
   deriving (Show, Eq, Generic)
-
--- TODO consider allowing an 8-colour alternative to a given 256-colour
 
 colourSGR :: ConsoleLayer -> Colour -> SGR
 colourSGR layer = \case
