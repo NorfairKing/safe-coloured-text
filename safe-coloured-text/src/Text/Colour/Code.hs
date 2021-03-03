@@ -53,6 +53,11 @@ data SGR
   | SetConsoleIntensity !ConsoleIntensity
   | SetColour !ColourIntensity !ConsoleLayer !TerminalColour
   | Set8BitColour !ConsoleLayer !Word8
+  | Set24BitColour
+      !ConsoleLayer
+      !Word8 -- Red
+      !Word8 -- Green
+      !Word8 -- Blue
   deriving (Show, Eq, Generic)
 
 csiParamsToWords :: [Word8] -> Builder
@@ -96,6 +101,15 @@ sgrToCSIParams = \case
         Background -> 48,
       5,
       w
+    ]
+  Set24BitColour l r g b ->
+    [ case l of
+        Foreground -> 38
+        Background -> 48,
+      2,
+      r,
+      g,
+      b
     ]
 
 -- | ANSI text underlining
