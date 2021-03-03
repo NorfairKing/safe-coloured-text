@@ -29,6 +29,8 @@ module Text.Colour
     brightMagenta,
     brightCyan,
     brightWhite,
+    color256,
+    colour256,
 
     -- * IO
     TerminalCapabilities (..),
