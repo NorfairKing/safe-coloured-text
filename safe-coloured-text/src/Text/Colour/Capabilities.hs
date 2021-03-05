@@ -9,6 +9,7 @@ import qualified System.Console.Terminfo as Terminfo
 import System.Environment (lookupEnv)
 import System.IO
 
+-- Note that the order of these constructors matters!
 data TerminalCapabilities
   = WithoutColours
   | With8Colours

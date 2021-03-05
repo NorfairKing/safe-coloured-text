@@ -41,6 +41,10 @@ module Text.Colour
     renderChunks,
     renderChunk,
 
+    -- ** Rendering chunks to strict bytestring
+    renderChunksBS,
+    renderChunkBS,
+
     -- ** Outputting chunks directly
     putChunks,
     hPutChunks,
