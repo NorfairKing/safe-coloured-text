@@ -30,19 +30,24 @@ data Chunk = Chunk
 instance IsString Chunk where
   fromString = chunk . fromString
 
-plainChunk :: Chunk -> Bool
-plainChunk Chunk {..} =
+plainChunk :: TerminalCapabilities -> Chunk -> Bool
+plainChunk tc Chunk {..} =
   and
     [ isNothing chunkItalic,
       isNothing chunkConsoleIntensity,
       isNothing chunkUnderlining,
-      isNothing chunkForeground,
-      isNothing chunkBackground
+      maybe True (plainColour tc) chunkForeground,
+      maybe True (plainColour tc) chunkBackground
     ]
+
+plainColour :: TerminalCapabilities -> Colour -> Bool
+plainColour tc = \case
+  Colour8 {} -> tc < With8Colours
+  Colour8Bit {} -> tc < With8BitColours
+  Colour24Bit {} -> tc < With24BitColours
 
 -- | Render a chunk directly to bytestring.
 -- You probably want to use 'renderChunks' instead.
--- This is just for testing.
 renderChunksBS :: TerminalCapabilities -> [Chunk] -> ByteString
 renderChunksBS tc = LB.toStrict . SBB.toLazyByteString . renderChunks tc
 
@@ -51,13 +56,12 @@ renderChunks tc = foldMap (renderChunk tc)
 
 -- | Render a chunk directly to bytestring.
 -- You probably want to use 'renderChunk' instead.
--- This is just for testing.
 renderChunkBS :: TerminalCapabilities -> Chunk -> ByteString
 renderChunkBS tc = LB.toStrict . SBB.toLazyByteString . renderChunk tc
 
 renderChunk :: TerminalCapabilities -> Chunk -> Builder
 renderChunk tc c@Chunk {..} =
-  if plainChunk c
+  if plainChunk tc c
     then SBB.byteString (TE.encodeUtf8 chunkText)
     else
       mconcat
@@ -174,3 +178,10 @@ colour256 = Colour8Bit
 -- | Bloody americans...
 color256 :: Word8 -> Colour
 color256 = colour256
+
+colourRGB :: Word8 -> Word8 -> Word8 -> Colour
+colourRGB = Colour24Bit
+
+-- | Bloody americans...
+colorRGB :: Word8 -> Word8 -> Word8 -> Colour
+colorRGB = Colour24Bit

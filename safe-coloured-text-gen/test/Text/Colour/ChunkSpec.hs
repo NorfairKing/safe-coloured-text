@@ -17,6 +17,18 @@ spec :: Spec
 spec = do
   let gf = ("test_resources/chunk/" ++)
   describe "renderChunk" $ do
+    it "outputs plain text if the terminal has no colours" $
+      renderChunksBS WithoutColours [fore red "hello"] `shouldBe` "hello"
+    it "outputs plain text if the terminal has no colours and 256 are needed" $
+      renderChunksBS WithoutColours [fore (colour256 128) "hello"] `shouldBe` "hello"
+    it "outputs plain text if the terminal has only 8 colours and 256 are needed" $
+      renderChunksBS With8Colours [fore (colour256 128) "hello"] `shouldBe` "hello"
+    it "outputs plain text if the terminal has no colours and 24bit colours are needed" $
+      renderChunksBS WithoutColours [fore (colourRGB 128 128 128) "hello"] `shouldBe` "hello"
+    it "outputs plain text if the terminal has only 8 colours and 24bit colours are needed" $
+      renderChunksBS With8Colours [fore (colourRGB 128 128 128) "hello"] `shouldBe` "hello"
+    it "outputs plain text if the terminal has only 8bit colours and 24bit colours are needed" $
+      renderChunksBS With8BitColours [fore (colourRGB 128 128 128) "hello"] `shouldBe` "hello"
     it "outputs a plain chunk the same as before" $
       pureGoldenByteStringFile (gf "plain.dat") (renderChunkBS With24BitColours (chunk "Hello world"))
     describe "8 colours" $ do
