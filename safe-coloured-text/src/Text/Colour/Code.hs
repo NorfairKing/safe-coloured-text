@@ -61,7 +61,12 @@ data SGR
   deriving (Show, Eq, Generic)
 
 csiParamsToWords :: [Word8] -> Builder
-csiParamsToWords = mconcat . intersperse (SBB.word8 csiDelimiter) . map SBB.word8Dec
+csiParamsToWords = mconcat . intersperse (SBB.word8 csiDelimiter) . map csiParamToWord
+
+csiParamToWord :: Word8 -> Builder
+csiParamToWord = \case
+  0 -> mempty
+  w -> SBB.word8Dec w
 
 sgrToCSIParams :: SGR -> [Word8]
 sgrToCSIParams = \case
