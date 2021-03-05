@@ -11,12 +11,20 @@ import System.IO
 
 -- Note that the order of these constructors matters!
 data TerminalCapabilities
-  = WithoutColours
-  | With8Colours
-  | With8BitColours
-  | With24BitColours
+  = -- | No colours
+    WithoutColours
+  | -- | Only 8 colours
+    With8Colours
+  | -- | Only 8-bit colours
+    With8BitColours
+  | -- | All 24-bit colours
+    With24BitColours
   deriving (Show, Eq, Ord, Generic)
 
+-- | Try to detect how many colours the terminal can handle.
+--
+-- This is based on the @colors@ capability of the terminfo detected based on the @TERM@ environment variable.
+-- If the terminal can handle 8-bit colours and also has the @COLORTERM@ environment variable set to @24bit@ or @truecolor@, then this function will return 'With24BitColours'.
 getTerminalCapabilitiesFromEnv :: IO TerminalCapabilities
 getTerminalCapabilitiesFromEnv = do
   mTerm <- (Just <$> Terminfo.setupTermFromEnv) `catch` (\(_ :: Terminfo.SetupTermError) -> pure Nothing)
@@ -38,6 +46,9 @@ getTerminalCapabilitiesFromEnv = do
               | c >= 8 -> With8Colours
               | otherwise -> WithoutColours
 
+-- | Try to detect how many colours a given handle can handle.
+--
+-- This function does the same as 'getTerminalCapabilitiesFromEnv' but returns 'WithoutColours' is not a terminal device.
 getTerminalCapabilitiesFromHandle :: Handle -> IO TerminalCapabilities
 getTerminalCapabilitiesFromHandle h = do
   isTerm <- hIsTerminalDevice h
