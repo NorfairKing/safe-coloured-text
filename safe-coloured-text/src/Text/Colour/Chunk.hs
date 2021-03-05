@@ -47,18 +47,18 @@ plainColour tc = \case
   Colour24Bit {} -> tc < With24BitColours
 
 -- | Render a chunk directly to bytestring.
--- You probably want to use 'renderChunks' instead.
-renderChunksBS :: TerminalCapabilities -> [Chunk] -> ByteString
+renderChunksBS :: Foldable f => TerminalCapabilities -> f Chunk -> ByteString
 renderChunksBS tc = LB.toStrict . SBB.toLazyByteString . renderChunks tc
 
+-- | Render chunks to a bytestring builder
 renderChunks :: Foldable f => TerminalCapabilities -> f Chunk -> Builder
 renderChunks tc = foldMap (renderChunk tc)
 
 -- | Render a chunk directly to bytestring.
--- You probably want to use 'renderChunk' instead.
 renderChunkBS :: TerminalCapabilities -> Chunk -> ByteString
 renderChunkBS tc = LB.toStrict . SBB.toLazyByteString . renderChunk tc
 
+-- | Render a chunk to a bytestring builder
 renderChunk :: TerminalCapabilities -> Chunk -> Builder
 renderChunk tc c@Chunk {..} =
   if plainChunk tc c
@@ -80,6 +80,7 @@ chunkSGR tc Chunk {..} =
       chunkBackground >>= colourSGR tc Background
     ]
 
+-- Turn a text into a plain chunk, without any styling
 chunk :: Text -> Chunk
 chunk t =
   Chunk
@@ -108,6 +109,9 @@ italic chu = chu {chunkItalic = Just True}
 
 underline :: Chunk -> Chunk
 underline chu = chu {chunkUnderlining = Just SingleUnderline}
+
+doubleUnderline :: Chunk -> Chunk
+doubleUnderline chu = chu {chunkUnderlining = Just DoubleUnderline}
 
 -- TODO consider allowing an 8-colour alternative to a given 256-colour
 data Colour
@@ -172,16 +176,22 @@ brightCyan = Colour8 Bright Cyan
 brightWhite :: Colour
 brightWhite = Colour8 Bright White
 
+-- | Bulid an 8-bit RGB Colour
+--
+-- This will not be rendered unless 'With8BitColours' is used.
 colour256 :: Word8 -> Colour
 colour256 = Colour8Bit
 
--- | Bloody americans...
+-- | Alias for 'colour256', bloody americans...
 color256 :: Word8 -> Colour
 color256 = colour256
 
+-- | Bulid a 24-bit RGB Colour
+--
+-- This will not be rendered unless 'With24BitColours' is used.
 colourRGB :: Word8 -> Word8 -> Word8 -> Colour
 colourRGB = Colour24Bit
 
--- | Bloody americans...
+-- | Alias for 'colourRGB', bloody americans...
 colorRGB :: Word8 -> Word8 -> Word8 -> Colour
 colorRGB = Colour24Bit
