@@ -1,10 +1,12 @@
-name:                safe-coloured-text
-version:             0.0.0.0
-github:              "NorfairKing/safe-coloured-text"
-license:             MIT
-author:              "Tom Sydney Kerckhove"
-maintainer:          "syd@cs-syd.eu"
-copyright:           "Copyright (c) 2020 Tom Sydney Kerckhove"
+name: safe-coloured-text
+version: 0.0.0.0
+github: "NorfairKing/safe-coloured-text"
+license: MIT
+category: User Interfaces
+author: "Tom Sydney Kerckhove"
+maintainer: "syd@cs-syd.eu"
+copyright: "Copyright (c) 2020 Tom Sydney Kerckhove"
+synopsis: Safely output coloured text
 
 dependencies:
 - base >= 4.7 && < 5
