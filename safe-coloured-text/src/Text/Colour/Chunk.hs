@@ -80,7 +80,7 @@ chunkSGR tc Chunk {..} =
       chunkBackground >>= colourSGR tc Background
     ]
 
--- Turn a text into a plain chunk, without any styling
+-- | Turn a text into a plain chunk, without any styling
 chunk :: Text -> Chunk
 chunk t =
   Chunk
