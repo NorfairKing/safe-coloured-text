@@ -14,7 +14,7 @@ library:
   source-dirs: src
 
 tests:
-  safe-coloured-text-gen-test:
+  safe-coloured-text-test:
     main: Spec.hs
     source-dirs: test
     build-tools: sydtest-discover
