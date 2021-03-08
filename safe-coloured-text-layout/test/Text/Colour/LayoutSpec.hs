@@ -37,7 +37,7 @@ spec = do
                 ]
             )
         )
-    it "outputs this two-column table the same as before" $ do
+    it "outputs this weird two-column table the same as before" $ do
       pureGoldenByteStringFile
         (gf "table-with-rows-of-unequal-length.dat")
         ( renderChunksBS
