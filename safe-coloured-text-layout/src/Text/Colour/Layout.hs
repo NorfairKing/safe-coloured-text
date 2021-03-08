@@ -18,20 +18,23 @@ table cs =
   Table
     { tableCells = cs,
       tableColumnSeparator = " ",
-      tableBackgroundColour = Nothing
+      tableBackground = Nothing
     }
 
 data Table = Table
   { -- | A list of rows. They must be of the same length.
     tableCells :: [[Chunk]],
     tableColumnSeparator :: Chunk,
-    tableBackgroundColour :: Maybe Colour
+    tableBackground :: Maybe TableBackground
   }
   deriving (Show, Eq, Generic)
 
--- TODO spacing
--- TODO single-colour background
--- TODO bicolour background
+data TableBackground
+  = SingleColour Colour
+  | Bicolour
+      Colour -- Even-numbered table rows (0-indexed)
+      Colour -- Odd-numbered table rows
+  deriving (Show, Eq, Generic)
 
 renderTable :: Table -> [Chunk]
 renderTable Table {..} =
@@ -50,13 +53,18 @@ renderTable Table {..} =
       paddedColumns = map (padEntireColumn . addLengthsToColumn) asColumns
       paddedRows :: [[(Chunk, Chunk)]]
       paddedRows = transpose paddedColumns
-      withBg :: Chunk -> Chunk
-      withBg = possiblyAddBackground tableBackgroundColour
-      renderRow :: [(Chunk, Chunk)] -> [Chunk]
-      renderRow [] = ["\n"]
-      renderRow [(c, p)] = withBg c : withBg p : renderRow []
-      renderRow ((c1, p1) : t2 : rest) = withBg c1 : withBg p1 : withBg tableColumnSeparator : renderRow (t2 : rest)
-   in concatMap renderRow paddedRows
+      withBg :: Int -> Chunk -> Chunk
+      withBg i = possiblyAddBackground $ backgroundForRow i tableBackground
+      renderRow :: Int -> [(Chunk, Chunk)] -> [Chunk]
+      renderRow i = go
+        where
+          go [] = ["\n"]
+          go [(c, p)] = withBg i c : withBg i p : go []
+          go ((c1, p1) : t2 : rest) = withBg i c1 : withBg i p1 : withBg i tableColumnSeparator : go (t2 : rest)
+   in concat $ iterateLikeInPython renderRow paddedRows
+
+iterateLikeInPython :: (Int -> a -> b) -> [a] -> [b]
+iterateLikeInPython f = zipWith f . zip [0 ..]
 
 padRows :: [[Chunk]] -> [[Chunk]]
 padRows [] = []
@@ -71,3 +79,8 @@ paddingChunk l c = chunk $ T.pack $ replicate l c
 
 possiblyAddBackground :: Maybe Colour -> Chunk -> Chunk
 possiblyAddBackground mb c = c {chunkBackground = chunkBackground c <|> mb}
+
+backgroundForRow :: Int -> Maybe TableBackground -> Maybe Colour
+backgroundForRow _ Nothing = Nothing
+backgroundForRow _ (Just (SingleColour c)) = Just c
+backgroundForRow i (Just (Bicolour ec oc)) = Just $ if even i then ec else oc
