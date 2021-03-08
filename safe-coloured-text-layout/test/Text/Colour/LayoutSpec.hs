@@ -61,3 +61,15 @@ spec = do
                   }
             )
         )
+    it "outputs this table with a background colour the same as before" $ do
+      pureGoldenByteStringFile
+        (gf "background.dat")
+        ( renderChunksBS
+            With24BitColours
+            ( renderTable $
+                ( table $ [[fore red $ chunk (T.pack (show (x ^ y))) | x <- [0 :: Int .. 4]] | y <- [0 :: Int .. 4]]
+                )
+                  { tableBackgroundColour = Just black
+                  }
+            )
+        )

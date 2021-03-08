@@ -4,6 +4,7 @@
 
 module Text.Colour.Layout where
 
+import Control.Applicative
 import Data.List
 import qualified Data.Text as T
 import GHC.Generics (Generic)
@@ -16,13 +17,15 @@ table :: [[Chunk]] -> Table
 table cs =
   Table
     { tableCells = cs,
-      tableColumnSeparator = " "
+      tableColumnSeparator = " ",
+      tableBackgroundColour = Nothing
     }
 
 data Table = Table
   { -- | A list of rows. They must be of the same length.
     tableCells :: [[Chunk]],
-    tableColumnSeparator :: Chunk
+    tableColumnSeparator :: Chunk,
+    tableBackgroundColour :: Maybe Colour
   }
   deriving (Show, Eq, Generic)
 
@@ -47,10 +50,12 @@ renderTable Table {..} =
       paddedColumns = map (padEntireColumn . addLengthsToColumn) asColumns
       paddedRows :: [[(Chunk, Chunk)]]
       paddedRows = transpose paddedColumns
+      withBg :: Chunk -> Chunk
+      withBg = possiblyAddBackground tableBackgroundColour
       renderRow :: [(Chunk, Chunk)] -> [Chunk]
       renderRow [] = ["\n"]
-      renderRow [(c, p)] = c : p : renderRow []
-      renderRow ((c1, p1) : t2 : rest) = c1 : p1 : tableColumnSeparator : renderRow (t2 : rest)
+      renderRow [(c, p)] = withBg c : withBg p : renderRow []
+      renderRow ((c1, p1) : t2 : rest) = withBg c1 : withBg p1 : withBg tableColumnSeparator : renderRow (t2 : rest)
    in concatMap renderRow paddedRows
 
 padRows :: [[Chunk]] -> [[Chunk]]
@@ -63,3 +68,6 @@ padRows css =
 
 paddingChunk :: Int -> Char -> Chunk
 paddingChunk l c = chunk $ T.pack $ replicate l c
+
+possiblyAddBackground :: Maybe Colour -> Chunk -> Chunk
+possiblyAddBackground mb c = c {chunkBackground = chunkBackground c <|> mb}
