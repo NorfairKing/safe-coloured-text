@@ -69,7 +69,19 @@ spec = do
             ( renderTable $
                 ( table $ [[fore red $ chunk (T.pack (show (x ^ y))) | x <- [0 :: Int .. 4]] | y <- [0 :: Int .. 4]]
                 )
-                  { tableBackgroundColour = Just black
+                  { tableBackground = Just (SingleColour black)
+                  }
+            )
+        )
+    it "outputs this table with a bicoloured background the same as before" $ do
+      pureGoldenByteStringFile
+        (gf "bicolour-background.dat")
+        ( renderChunksBS
+            With24BitColours
+            ( renderTable $
+                ( table $ [[fore red $ chunk (T.pack (show (x ^ y))) | x <- [0 :: Int .. 4]] | y <- [0 :: Int .. 4]]
+                )
+                  { tableBackground = Just (Bicolour black brightBlack)
                   }
             )
         )
