@@ -2,6 +2,7 @@ resolver: lts-15.15
 packages:
 - safe-coloured-text
 - safe-coloured-text-gen
+- safe-coloured-text-layout
 extra-deps:
 - github: NorfairKing/sydtest
   commit: a0d30b4ad76bf29b28893320dc777a7709441252

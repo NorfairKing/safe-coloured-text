@@ -1,0 +1,34 @@
+name: safe-coloured-text-layout
+version: 0.0.0.0
+github: "NorfairKing/safe-coloured-text"
+license: MIT
+category: User Interfaces
+author: "Tom Sydney Kerckhove"
+maintainer: "syd@cs-syd.eu"
+copyright: "Copyright (c) 2020 Tom Sydney Kerckhove"
+synopsis: Safely layout output coloured text
+
+dependencies:
+- base >= 4.7 && < 5
+
+library:
+  source-dirs: src
+  dependencies:
+  - safe-coloured-text
+  - text
+
+tests:
+  safe-coloured-text-layout-test:
+    main: Spec.hs
+    source-dirs: test
+    build-tools: sydtest-discover
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - bytestring
+    - safe-coloured-text
+    - safe-coloured-text-layout
+    - sydtest
+    - text
