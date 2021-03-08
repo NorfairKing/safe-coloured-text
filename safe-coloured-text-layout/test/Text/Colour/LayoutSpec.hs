@@ -2,6 +2,7 @@
 
 module Text.Colour.LayoutSpec (spec) where
 
+import qualified Data.Text as T
 import Test.Syd
 import Text.Colour
 import Text.Colour.Layout
@@ -46,5 +47,17 @@ spec = do
                   ["is", "this", "", "-ing", ""],
                   ["I", "don't", "understand", "one", "", "of", "it"]
                 ]
+            )
+        )
+    it "outputs this two-column table with a custom column separator the same as before" $ do
+      pureGoldenByteStringFile
+        (gf "custom-column-separator.dat")
+        ( renderChunksBS
+            With24BitColours
+            ( renderTable $
+                ( table $ [[chunk (T.pack (show (x + y))) | x <- [0 :: Int .. 9]] | y <- [0 :: Int .. 9]]
+                )
+                  { tableColumnSeparator = "@"
+                  }
             )
         )
