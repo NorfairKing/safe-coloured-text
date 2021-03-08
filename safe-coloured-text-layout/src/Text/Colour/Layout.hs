@@ -64,7 +64,7 @@ renderTable Table {..} =
    in concat $ iterateLikeInPython renderRow paddedRows
 
 iterateLikeInPython :: (Int -> a -> b) -> [a] -> [b]
-iterateLikeInPython f = zipWith f . zip [0 ..]
+iterateLikeInPython f = zipWith f [0 ..]
 
 padRows :: [[Chunk]] -> [[Chunk]]
 padRows [] = []
