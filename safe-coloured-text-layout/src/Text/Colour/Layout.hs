@@ -32,8 +32,8 @@ data Table = Table
 data TableBackground
   = SingleColour Colour
   | Bicolour
-      Colour -- Even-numbered table rows (0-indexed)
-      Colour -- Odd-numbered table rows
+      (Maybe Colour) -- Even-numbered table rows (0-indexed)
+      (Maybe Colour) -- Odd-numbered table rows
   deriving (Show, Eq, Generic)
 
 renderTable :: Table -> [Chunk]
@@ -83,4 +83,4 @@ possiblyAddBackground mb c = c {chunkBackground = chunkBackground c <|> mb}
 backgroundForRow :: Int -> Maybe TableBackground -> Maybe Colour
 backgroundForRow _ Nothing = Nothing
 backgroundForRow _ (Just (SingleColour c)) = Just c
-backgroundForRow i (Just (Bicolour ec oc)) = Just $ if even i then ec else oc
+backgroundForRow i (Just (Bicolour ec oc)) = if even i then ec else oc
