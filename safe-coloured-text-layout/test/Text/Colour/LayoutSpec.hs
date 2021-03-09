@@ -81,7 +81,7 @@ spec = do
             ( renderTable $
                 ( table $ [[fore red $ chunk (T.pack (show (x ^ y))) | x <- [0 :: Int .. 4]] | y <- [0 :: Int .. 4]]
                 )
-                  { tableBackground = Just (Bicolour black brightBlack)
+                  { tableBackground = Just (Bicolour (Just black) (Just brightBlack))
                   }
             )
         )
