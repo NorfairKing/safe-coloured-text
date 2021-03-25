@@ -1,4 +1,4 @@
-name: safe-coloured-text
+name: safe-coloured-text-terminfo
 version: 0.0.0.0
 github: "NorfairKing/safe-coloured-text"
 license: MIT
@@ -14,5 +14,5 @@ dependencies:
 library:
   source-dirs: src
   dependencies:
-  - bytestring
-  - text
+  - safe-coloured-text
+  - terminfo

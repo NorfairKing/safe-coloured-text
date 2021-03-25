@@ -20,6 +20,7 @@ with final.haskell.lib;
       "safe-coloured-text" = safeColouredTextPkg "safe-coloured-text";
       "safe-coloured-text-gen" = safeColouredTextPkg "safe-coloured-text-gen";
       "safe-coloured-text-layout" = safeColouredTextPkg "safe-coloured-text-layout";
+      "safe-coloured-text-terminfo" = safeColouredTextPkg "safe-coloured-text-terminfo";
     };
 
   safeColouredTextRelease =
