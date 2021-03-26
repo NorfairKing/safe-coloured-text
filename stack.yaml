@@ -3,9 +3,10 @@ packages:
 - safe-coloured-text
 - safe-coloured-text-gen
 - safe-coloured-text-layout
+- safe-coloured-text-terminfo
 extra-deps:
 - github: NorfairKing/sydtest
-  commit: a0d30b4ad76bf29b28893320dc777a7709441252
+  commit: 0fad471cee677a4018acbe1983385dfc9a1b49d2
   subdirs:
   - sydtest
   - sydtest-discover
