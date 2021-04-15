@@ -24,6 +24,7 @@ source-repository head
 library
   exposed-modules:
       Text.Colour.Capabilities.FromEnv
+      Text.Colour.Term
   other-modules:
       Paths_safe_coloured_text_terminfo
   hs-source-dirs:
