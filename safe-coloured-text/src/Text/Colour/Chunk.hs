@@ -12,6 +12,7 @@ import Data.Maybe
 import Data.String
 import Data.Text (Text)
 import qualified Data.Text.Encoding as TE
+import Data.Validity
 import Data.Word
 import GHC.Generics (Generic)
 import Text.Colour.Capabilities
@@ -26,6 +27,8 @@ data Chunk = Chunk
     chunkBackground :: !(Maybe Colour)
   }
   deriving (Show, Eq, Generic)
+
+instance Validity Chunk
 
 instance IsString Chunk where
   fromString = chunk . fromString
@@ -119,6 +122,8 @@ data Colour
   | Colour8Bit !Word8 -- The 8-bit colour
   | Colour24Bit !Word8 !Word8 !Word8
   deriving (Show, Eq, Generic)
+
+instance Validity Colour
 
 colourSGR :: TerminalCapabilities -> ConsoleLayer -> Colour -> Maybe SGR
 colourSGR tc layer =

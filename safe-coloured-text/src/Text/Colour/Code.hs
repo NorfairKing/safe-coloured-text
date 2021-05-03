@@ -9,6 +9,9 @@ import qualified Data.ByteString.Builder as SBB
 import qualified Data.ByteString.Internal as SBI
 import qualified Data.ByteString.Lazy as LB
 import Data.List
+import Data.Validity
+import Data.Validity.ByteString ()
+import Data.Validity.Text ()
 import Data.Word
 import GHC.Generics (Generic)
 
@@ -25,6 +28,8 @@ csiDelimiter = SBI.c2w ';'
 newtype CSI
   = SGR [SGR]
   deriving (Show, Eq, Generic)
+
+instance Validity CSI
 
 -- | Render a CSI directly to bytestring.
 -- You probably want to use 'renderCSI' instead.
@@ -59,6 +64,8 @@ data SGR
       !Word8 -- Green
       !Word8 -- Blue
   deriving (Show, Eq, Generic)
+
+instance Validity SGR
 
 csiParamsToWords :: [Word8] -> Builder
 csiParamsToWords = mconcat . intersperse (SBB.word8 csiDelimiter) . map csiParamToWord
@@ -117,6 +124,8 @@ data Underlining
   | NoUnderline
   deriving (Show, Eq, Generic, Bounded, Enum)
 
+instance Validity Underlining
+
 -- | ANSI general console intensity: usually treated as setting the font style
 -- (e.g. 'BoldIntensity' causes text to be bold)
 data ConsoleIntensity
@@ -125,17 +134,23 @@ data ConsoleIntensity
   | NormalIntensity
   deriving (Show, Eq, Generic, Bounded, Enum)
 
+instance Validity ConsoleIntensity
+
 -- | ANSI's standard colours come in two intensities
 data ColourIntensity
   = Dull
   | Bright
   deriving (Show, Eq, Generic, Enum, Bounded)
 
+instance Validity ColourIntensity
+
 -- | ANSI colours can be set on two different layers
 data ConsoleLayer
   = Foreground
   | Background
   deriving (Show, Eq, Generic, Enum, Bounded)
+
+instance Validity ConsoleLayer
 
 data TerminalColour
   = Black
@@ -147,6 +162,8 @@ data TerminalColour
   | Cyan
   | White
   deriving (Show, Eq, Generic, Enum, Bounded)
+
+instance Validity TerminalColour
 
 terminalColourSGRParameter :: TerminalColour -> Word8
 terminalColourSGRParameter = \case

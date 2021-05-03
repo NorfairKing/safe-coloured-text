@@ -19,12 +19,18 @@ source-repository head
   location: https://github.com/NorfairKing/safe-coloured-text
 
 library
+  exposed-modules:
+      Text.Colour.Gen
   other-modules:
       Paths_safe_coloured_text_gen
   hs-source-dirs:
       src
   build-depends:
       base >=4.7 && <5
+    , genvalidity
+    , genvalidity-bytestring
+    , genvalidity-text
+    , safe-coloured-text
   default-language: Haskell2010
 
 test-suite safe-coloured-text-test
@@ -33,6 +39,7 @@ test-suite safe-coloured-text-test
   other-modules:
       Text.Colour.ChunkSpec
       Text.Colour.CodeSpec
+      Text.ColourSpec
       Paths_safe_coloured_text_gen
   hs-source-dirs:
       test
@@ -41,7 +48,9 @@ test-suite safe-coloured-text-test
       sydtest-discover:sydtest-discover
   build-depends:
       base >=4.7 && <5
+    , genvalidity-sydtest
     , safe-coloured-text
+    , safe-coloured-text-gen
     , sydtest
     , text
   default-language: Haskell2010

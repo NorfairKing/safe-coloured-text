@@ -12,6 +12,11 @@ dependencies:
 
 library:
   source-dirs: src
+  dependencies:
+  - genvalidity
+  - genvalidity-bytestring
+  - genvalidity-text
+  - safe-coloured-text
 
 tests:
   safe-coloured-text-test:
@@ -23,6 +28,8 @@ tests:
     - -rtsopts
     - -with-rtsopts=-N
     dependencies:
+    - genvalidity-sydtest
     - safe-coloured-text
+    - safe-coloured-text-gen
     - sydtest
     - text

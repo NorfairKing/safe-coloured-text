@@ -14,8 +14,7 @@
 
 ## Few dependencies
 
-Only `bytestring`, `text` and `terminfo`.
-If the `terminfo` dependency ever gets us into trouble, we can factor it out as well.
+Only `bytestring`, `text` and `terminfo` and the relevant `validity` library.
 
 ## Well-tested
 

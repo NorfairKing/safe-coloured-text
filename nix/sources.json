@@ -47,6 +47,18 @@
         "url": "https://github.com/NorfairKing/sydtest/archive/b6422a1940372e4670fa628f8d62f0ba6519d867.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
+    "validity": {
+        "branch": "master",
+        "description": "Validity and validity-based testing",
+        "homepage": "https://www.youtube.com/watch?v=eIs9qNh17SM",
+        "owner": "NorfairKing",
+        "repo": "validity",
+        "rev": "86a824729519c154c23f0757f2ce4b9ab93b675a",
+        "sha256": "153028qywr85lrhf0yrjf9v7wf9bnbsn6w7lv3skppqi1k4igpvl",
+        "type": "tarball",
+        "url": "https://github.com/NorfairKing/validity/archive/86a824729519c154c23f0757f2ce4b9ab93b675a.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
     "yamlparse-applicative": {
         "branch": "master",
         "description": "An optparse-applicative -style explainable yaml parser",

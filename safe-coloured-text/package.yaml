@@ -16,3 +16,6 @@ library:
   dependencies:
   - bytestring
   - text
+  - validity
+  - validity-bytestring
+  - validity-text
