@@ -106,7 +106,7 @@ spec = do
       let gf8bit = ("test_resources/chunk/8bit/" ++)
       let chunks string = do
             let colour = do
-                  w <- (* 16) <$> [0 .. 15] -- Just a few colours, otherwise we end up with 65K files.
+                  w <- (* 16) <$> [0 .. 3] -- Just a few colours, otherwise we end up with 65K files.
                   pure $ Colour8Bit w
             let mColour = Nothing : map Just colour
             let chunkItalic = Nothing
@@ -140,7 +140,7 @@ spec = do
       let gf24bit = ("test_resources/chunk/24bit/" ++)
       let chunks string = do
             let colour = do
-                  let w = [0, 127, 255] -- Just a few colours, otherwise we end up with a boatload of files.
+                  let w = [0, 255] -- Just a few colours, otherwise we end up with a boatload of files.
                   r <- w
                   g <- w
                   b <- w
