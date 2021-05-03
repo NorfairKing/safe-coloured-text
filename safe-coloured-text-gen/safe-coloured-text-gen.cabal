@@ -19,8 +19,6 @@ source-repository head
   location: https://github.com/NorfairKing/safe-coloured-text
 
 library
-  exposed-modules:
-      Lib
   other-modules:
       Paths_safe_coloured_text_gen
   hs-source-dirs:

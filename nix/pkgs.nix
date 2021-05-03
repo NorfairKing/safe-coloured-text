@@ -1,20 +1,15 @@
-{ pkgsf ? import (import ./nixpkgs.nix { }) }:
 let
-  pkgs = pkgsf { };
-  yamlparse-applicative-overlay =
-    import (
-      builtins.fetchGit (import ./yamlparse-applicative-version.nix) + "/nix/overlay.nix"
-    );
-  sydtest-overlay =
-    import (
-      builtins.fetchGit (import ./sydtest-version.nix) + "/nix/overlay.nix"
-    );
+  sources = import ./sources.nix;
+in
+{ pkgsf ? import sources.nixpkgs }:
+let
   safeColouredTextPkgs =
     pkgsf {
       overlays =
         [
-          yamlparse-applicative-overlay
-          sydtest-overlay
+          (import (sources.yamlparse-applicative + "/nix/overlay.nix"))
+          (import (sources.sydtest + "/nix/overlay.nix"))
+          (final: previous: { niv = (import sources.niv { pkgs = final; }).niv; })
           (import ./gitignore-src.nix)
           (import ./overlay.nix)
         ];

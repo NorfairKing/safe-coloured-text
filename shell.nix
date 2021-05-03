@@ -1,13 +1,14 @@
 let
   pkgs = import ./nix/pkgs.nix { };
-  pre-commit-check = (import ./ci.nix { inherit pkgs; }).pre-commit-check;
+  pre-commit = import ./nix/pre-commit.nix;
 in
 pkgs.haskell.lib.buildStackProject {
-  name = "sydtest";
+  name = "safe-coloured-text-shell";
   buildInputs = with pkgs; [
     zlib
-  ];
+    niv
+  ] ++ pre-commit.tools;
   shellHook = ''
-    ${pre-commit-check.shellHook}
+    ${pre-commit.check.shellHook}
   '';
 }
