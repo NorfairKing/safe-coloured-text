@@ -16,6 +16,7 @@ library:
   dependencies:
   - safe-coloured-text
   - text
+  - validity
 
 tests:
   safe-coloured-text-layout-test:

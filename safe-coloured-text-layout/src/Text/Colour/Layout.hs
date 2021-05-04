@@ -7,6 +7,7 @@ module Text.Colour.Layout where
 import Control.Applicative
 import Data.List
 import qualified Data.Text as T
+import Data.Validity
 import GHC.Generics (Generic)
 import Text.Colour
 
@@ -29,12 +30,16 @@ data Table = Table
   }
   deriving (Show, Eq, Generic)
 
+instance Validity Table
+
 data TableBackground
   = SingleColour Colour
   | Bicolour
       (Maybe Colour) -- Even-numbered table rows (0-indexed)
       (Maybe Colour) -- Odd-numbered table rows
   deriving (Show, Eq, Generic)
+
+instance Validity TableBackground
 
 renderTable :: Table -> [Chunk]
 renderTable Table {..} =

@@ -32,6 +32,7 @@ library
       base >=4.7 && <5
     , safe-coloured-text
     , text
+    , validity
   default-language: Haskell2010
 
 test-suite safe-coloured-text-layout-test
