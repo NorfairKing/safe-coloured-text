@@ -3,6 +3,7 @@ packages:
 - safe-coloured-text
 - safe-coloured-text-gen
 - safe-coloured-text-layout
+- safe-coloured-text-layout-gen
 - safe-coloured-text-terminfo
 extra-deps:
 - github: NorfairKing/sydtest
