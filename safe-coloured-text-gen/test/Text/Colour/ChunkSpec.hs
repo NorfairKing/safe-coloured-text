@@ -30,10 +30,10 @@ spec = do
     it "outputs plain text if the terminal has only 8bit colours and 24bit colours are needed" $
       renderChunksBS With8BitColours [fore (colourRGB 128 128 128) "hello"] `shouldBe` "hello"
     it "outputs a plain chunk the same as before" $
-      pureGoldenByteStringFile (gf "plain.dat") (renderChunkBS With24BitColours (chunk "Hello world"))
+      pureGoldenByteStringFile (gf "plain.dat") (renderChunkBS With24BitColours (chunk "ook"))
     describe "8 colours" $ do
       let gf8 = ("test_resources/chunk/8/" ++)
-      let chunks string = do
+      let chunks string = justAFew $ do
             let colour = do
                   terminalColour <- [minBound .. maxBound]
                   intensity <- [minBound .. maxBound]
@@ -99,15 +99,13 @@ spec = do
                     <> ".dat"
             pure (name, path, Chunk {..})
 
-      forM_ (chunks "Hello world") $ \(name, path, c) ->
+      forM_ (chunks "ook") $ \(name, path, c) ->
         it (unwords ["outputs a", name, "the same way as before"]) $
           pureGoldenByteStringFile (gf8 path) (renderChunkBS With24BitColours c)
     describe "8bit colours" $ do
       let gf8bit = ("test_resources/chunk/8bit/" ++)
-      let chunks string = do
-            let colour = do
-                  w <- (* 16) <$> [0 .. 3] -- Just a few colours, otherwise we end up with 65K files.
-                  pure $ Colour8Bit w
+      let chunks string = justAFew $ do
+            let colour = Colour8Bit <$> [minBound .. maxBound]
             let mColour = Nothing : map Just colour
             let chunkItalic = Nothing
             let chunkConsoleIntensity = Nothing
@@ -133,14 +131,14 @@ spec = do
                     <> ".dat"
             pure (name, path, Chunk {..})
 
-      forM_ (chunks "Hello world") $ \(name, path, c) ->
+      forM_ (chunks "ook") $ \(name, path, c) ->
         it (unwords ["outputs a", name, "the same way as before"]) $
           pureGoldenByteStringFile (gf8bit path) (renderChunkBS With24BitColours c)
     describe "24bit colours" $ do
       let gf24bit = ("test_resources/chunk/24bit/" ++)
-      let chunks string = do
+      let chunks string = justAFew $ do
             let colour = do
-                  let w = [0, 255] -- Just a few colours, otherwise we end up with a boatload of files.
+                  let w = [0, 16 .. 255] -- Just a few colours, otherwise we end up with a boatload of files.
                   r <- w
                   g <- w
                   b <- w
@@ -170,7 +168,7 @@ spec = do
                     <> ".dat"
             pure (name, path, Chunk {..})
 
-      forM_ (chunks "Hello world") $ \(name, path, c) ->
+      forM_ (chunks "ook") $ \(name, path, c) ->
         it (unwords ["outputs a", name, "the same way as before"]) $
           pureGoldenByteStringFile (gf24bit path) (renderChunkBS With24BitColours c)
     describe "super fancy" $ do
@@ -234,3 +232,9 @@ colourPath =
 mColourPath :: Maybe Colour -> FilePath
 mColourPath Nothing = "no"
 mColourPath (Just c) = colourPath c
+
+justAFew :: [a] -> [a]
+justAFew = go 1
+  where
+    go _ [] = []
+    go i (a : as) = a : go (2 * i) (drop i as)
