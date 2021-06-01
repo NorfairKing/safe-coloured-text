@@ -6,12 +6,13 @@ cabal-version: 1.12
 
 name:           safe-coloured-text-gen
 version:        0.0.0.0
+description:    Generators for types in safe-coloured-text
 homepage:       https://github.com/NorfairKing/safe-coloured-text#readme
 bug-reports:    https://github.com/NorfairKing/safe-coloured-text/issues
 author:         Tom Sydney Kerckhove
 maintainer:     syd@cs-syd.eu
 copyright:      Copyright (c) 2020 Tom Sydney Kerckhove
-license:        AllRightsReserved
+license:        MIT
 build-type:     Simple
 
 source-repository head
