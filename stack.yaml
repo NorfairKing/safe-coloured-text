@@ -1,4 +1,4 @@
-resolver: lts-16.12
+resolver: nightly-2021-05-10
 packages:
 - safe-coloured-text
 - safe-coloured-text-gen
@@ -7,14 +7,14 @@ packages:
 - safe-coloured-text-terminfo
 extra-deps:
 - github: NorfairKing/sydtest
-  commit: b6422a1940372e4670fa628f8d62f0ba6519d867
+  commit: 0125c6d6d17d44753c793adc8dcaa4284fef2b7d
   subdirs:
   - sydtest
   - sydtest-discover
 - envparse-0.4.1@sha256:989902e6368532548f61de1fa245ad2b39176cddd8743b20071af519a709ce30,2842
 - yamlparse-applicative-0.1.0.2@sha256:bda91f2818c1b5b124963931cb7f9a4e5758d026c09713e9ae2234534062747d,2133
 - github: NorfairKing/validity
-  commit: 86a824729519c154c23f0757f2ce4b9ab93b675a
+  commit: 549f92de456dd7fbf21b84f2f6fdca9a3c6506d9
   subdirs:
   - genvalidity
   - genvalidity-aeson

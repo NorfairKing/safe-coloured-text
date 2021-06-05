@@ -1,7 +1,6 @@
-let
-  sources = import ./sources.nix;
-in
-{ pkgsf ? import sources.nixpkgs }:
+{ sources ? import ./sources.nix
+, pkgsf ? import sources.nixpkgs
+}:
 let
   safeColouredTextPkgs =
     pkgsf {

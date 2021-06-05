@@ -12,15 +12,15 @@
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "nixpkgs": {
-        "branch": "nixos-20.09",
+        "branch": "nixos-21.05",
         "description": "Nix Packages collection",
         "homepage": "",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "dc326c78a93862efb30a76216f527a56496e6284",
-        "sha256": "094zb1p5i5f2nlxny3dc814jvs90nimdj6wwd80495hgs9z76wgp",
+        "rev": "aa576357673d609e618d87db43210e49d4bb1789",
+        "sha256": "1868s3mp0lwg1jpxsgmgijzddr90bjkncf6k6zhdjqihf0i1n2np",
         "type": "tarball",
-        "url": "https://github.com/NixOS/nixpkgs/archive/dc326c78a93862efb30a76216f527a56496e6284.tar.gz",
+        "url": "https://github.com/NixOS/nixpkgs/archive/aa576357673d609e618d87db43210e49d4bb1789.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "pre-commit-hooks": {
@@ -41,10 +41,10 @@
         "homepage": "",
         "owner": "NorfairKing",
         "repo": "sydtest",
-        "rev": "b6422a1940372e4670fa628f8d62f0ba6519d867",
-        "sha256": "12yf4ks2mq4aaf5b7qn587jh83cvsi1izalj5hp56h0ynlwna69q",
+        "rev": "0125c6d6d17d44753c793adc8dcaa4284fef2b7d",
+        "sha256": "1mxvwngv7md0z7jddn4ffpqffs6qp8ka3ffbw3v545q5aijnkbhy",
         "type": "tarball",
-        "url": "https://github.com/NorfairKing/sydtest/archive/b6422a1940372e4670fa628f8d62f0ba6519d867.tar.gz",
+        "url": "https://github.com/NorfairKing/sydtest/archive/0125c6d6d17d44753c793adc8dcaa4284fef2b7d.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "validity": {
@@ -53,10 +53,10 @@
         "homepage": "https://www.youtube.com/watch?v=eIs9qNh17SM",
         "owner": "NorfairKing",
         "repo": "validity",
-        "rev": "86a824729519c154c23f0757f2ce4b9ab93b675a",
-        "sha256": "153028qywr85lrhf0yrjf9v7wf9bnbsn6w7lv3skppqi1k4igpvl",
+        "rev": "549f92de456dd7fbf21b84f2f6fdca9a3c6506d9",
+        "sha256": "1gbs61kcpyd8nha1g13dsmkhslkbmhxyjfb5fmg2nwqayxvdha58",
         "type": "tarball",
-        "url": "https://github.com/NorfairKing/validity/archive/86a824729519c154c23f0757f2ce4b9ab93b675a.tar.gz",
+        "url": "https://github.com/NorfairKing/validity/archive/549f92de456dd7fbf21b84f2f6fdca9a3c6506d9.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "yamlparse-applicative": {
