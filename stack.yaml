@@ -7,12 +7,17 @@ packages:
 - safe-coloured-text-terminfo
 extra-deps:
 - github: NorfairKing/sydtest
-  commit: 0125c6d6d17d44753c793adc8dcaa4284fef2b7d
+  commit: e75c55b920936e344b779093b2a0318fb35d1770
   subdirs:
   - sydtest
   - sydtest-discover
+- github: NorfairKing/autodocodec
+  commit: e5a54ccc0d09b600fdf784624e7df38b55676384
+  subdirs:
+  - autodocodec
+  - autodocodec-schema
+  - autodocodec-yaml
 - envparse-0.4.1@sha256:989902e6368532548f61de1fa245ad2b39176cddd8743b20071af519a709ce30,2842
-- yamlparse-applicative-0.1.0.2@sha256:bda91f2818c1b5b124963931cb7f9a4e5758d026c09713e9ae2234534062747d,2133
 - github: NorfairKing/validity
   commit: 549f92de456dd7fbf21b84f2f6fdca9a3c6506d9
   subdirs:

@@ -6,7 +6,7 @@ let
     pkgsf {
       overlays =
         [
-          (import (sources.yamlparse-applicative + "/nix/overlay.nix"))
+          (import (sources.autodocodec + "/nix/overlay.nix"))
           (import (sources.validity + "/nix/overlay.nix"))
           (import (sources.sydtest + "/nix/overlay.nix"))
           (final: previous: { niv = (import sources.niv { pkgs = final; }).niv; })
