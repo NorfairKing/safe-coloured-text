@@ -12,14 +12,14 @@ extra-deps:
   - sydtest
   - sydtest-discover
 - github: NorfairKing/autodocodec
-  commit: e5a54ccc0d09b600fdf784624e7df38b55676384
+  commit: f0cb2ead0985b4394db0627e6befd7ce23c54c22
   subdirs:
   - autodocodec
   - autodocodec-schema
   - autodocodec-yaml
 - envparse-0.4.1@sha256:989902e6368532548f61de1fa245ad2b39176cddd8743b20071af519a709ce30,2842
 - github: NorfairKing/validity
-  commit: 549f92de456dd7fbf21b84f2f6fdca9a3c6506d9
+  commit: 35bc8d45b27e6c21429e4b681b16e46ccd541b3b
   subdirs:
   - genvalidity
   - genvalidity-aeson

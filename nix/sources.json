@@ -5,10 +5,10 @@
         "homepage": null,
         "owner": "NorfairKing",
         "repo": "autodocodec",
-        "rev": "e5a54ccc0d09b600fdf784624e7df38b55676384",
-        "sha256": "166ky92kcx0skxx7aczx88af6aj6pl6fxyrsqiayzrfwzlryhzb2",
+        "rev": "f0cb2ead0985b4394db0627e6befd7ce23c54c22",
+        "sha256": "1wyhwq38zl8ph2y1n8xjia67f7viyv253jg9rr3a78qnwlpvjxbd",
         "type": "tarball",
-        "url": "https://github.com/NorfairKing/autodocodec/archive/e5a54ccc0d09b600fdf784624e7df38b55676384.tar.gz",
+        "url": "https://github.com/NorfairKing/autodocodec/archive/f0cb2ead0985b4394db0627e6befd7ce23c54c22.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "niv": {
@@ -65,10 +65,10 @@
         "homepage": "https://www.youtube.com/watch?v=eIs9qNh17SM",
         "owner": "NorfairKing",
         "repo": "validity",
-        "rev": "549f92de456dd7fbf21b84f2f6fdca9a3c6506d9",
-        "sha256": "1gbs61kcpyd8nha1g13dsmkhslkbmhxyjfb5fmg2nwqayxvdha58",
+        "rev": "35bc8d45b27e6c21429e4b681b16e46ccd541b3b",
+        "sha256": "1a0y9xbs4ypj8mynm6p4idvb7h4mnsasa1f4jcs57qbsihmhx5jz",
         "type": "tarball",
-        "url": "https://github.com/NorfairKing/validity/archive/549f92de456dd7fbf21b84f2f6fdca9a3c6506d9.tar.gz",
+        "url": "https://github.com/NorfairKing/validity/archive/35bc8d45b27e6c21429e4b681b16e46ccd541b3b.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     }
 }
