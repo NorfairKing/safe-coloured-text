@@ -8,6 +8,7 @@ pkgs.haskell.lib.buildStackProject {
   buildInputs = with pkgs; [
     zlib
     (import sources.niv { }).niv
+    pkgs.haskell.compiler.ghc921
   ] ++ pre-commit.tools;
   shellHook = ''
     ${pre-commit.check.shellHook}

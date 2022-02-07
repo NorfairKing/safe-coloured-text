@@ -1,0 +1,67 @@
+resolver: nightly-2022-02-07
+compiler: ghc-9.2.1
+packages:
+- safe-coloured-text
+- safe-coloured-text-gen
+- safe-coloured-text-layout
+- safe-coloured-text-layout-gen
+- safe-coloured-text-terminfo
+extra-deps:
+- github: NorfairKing/sydtest
+  commit: e75c55b920936e344b779093b2a0318fb35d1770
+  subdirs:
+  - sydtest
+  - sydtest-discover
+- github: NorfairKing/autodocodec
+  commit: f0cb2ead0985b4394db0627e6befd7ce23c54c22
+  subdirs:
+  - autodocodec
+  - autodocodec-schema
+  - autodocodec-yaml
+- envparse-0.4.1@sha256:989902e6368532548f61de1fa245ad2b39176cddd8743b20071af519a709ce30,2842
+# https://github.com/NorfairKing/validity/pull/100
+- github: srid/validity
+  commit: 3d95a17f1223615b7f55e4e7bf9350227023ee9d # ghc921
+  subdirs:
+  - genvalidity
+  - genvalidity-aeson
+  - genvalidity-bytestring
+  - genvalidity-containers
+  - genvalidity-criterion
+  - genvalidity-hspec
+  - genvalidity-hspec-aeson
+  - genvalidity-hspec-binary
+  - genvalidity-hspec-cereal
+  - genvalidity-hspec-hashable
+  - genvalidity-hspec-optics
+  - genvalidity-hspec-persistent
+  - genvalidity-path
+  - genvalidity-persistent
+  - genvalidity-property
+  - genvalidity-scientific
+  - genvalidity-sydtest
+  - genvalidity-sydtest-aeson
+  - genvalidity-sydtest-hashable
+  - genvalidity-sydtest-lens
+  - genvalidity-sydtest-persistent
+  - genvalidity-text
+  - genvalidity-time
+  - genvalidity-unordered-containers
+  - genvalidity-uuid
+  - genvalidity-vector
+  - validity
+  - validity-aeson
+  - validity-bytestring
+  - validity-containers
+  - validity-path
+  - validity-persistent
+  - validity-primitive
+  - validity-scientific
+  - validity-text
+  - validity-time
+  - validity-unordered-containers
+  - validity-uuid
+  - validity-vector
+nix:
+  shell-file: shell.nix
+  add-gc-roots: true
