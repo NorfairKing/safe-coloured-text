@@ -1,4 +1,4 @@
-resolver: nightly-2021-05-10
+resolver: lts-19.3
 packages:
 - safe-coloured-text
 - safe-coloured-text-gen
@@ -7,19 +7,19 @@ packages:
 - safe-coloured-text-terminfo
 extra-deps:
 - github: NorfairKing/sydtest
-  commit: e75c55b920936e344b779093b2a0318fb35d1770
+  commit: 70353288a5376c988a16ed0f595199d719bbacf6
   subdirs:
   - sydtest
   - sydtest-discover
 - github: NorfairKing/autodocodec
-  commit: f0cb2ead0985b4394db0627e6befd7ce23c54c22
+  commit: fa655f633a7af200b02b1ddd7d6d853167ba9c09
   subdirs:
   - autodocodec
   - autodocodec-schema
   - autodocodec-yaml
 - envparse-0.4.1@sha256:989902e6368532548f61de1fa245ad2b39176cddd8743b20071af519a709ce30,2842
 - github: NorfairKing/validity
-  commit: 35bc8d45b27e6c21429e4b681b16e46ccd541b3b
+  commit: 258414b8e2341cd92a859af7f9d0e847c13dba64
   subdirs:
   - genvalidity
   - genvalidity-aeson
@@ -60,6 +60,6 @@ extra-deps:
   - validity-unordered-containers
   - validity-uuid
   - validity-vector
+
 nix:
   shell-file: shell.nix
-  add-gc-roots: true
