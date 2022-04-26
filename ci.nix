@@ -3,7 +3,7 @@
 }:
 let
   versions = {
-    "lts-16_11" = "89db531aea80df58584c9a9e3504ffd9617e6b48";
+    "nixos-21_11" = "5a2e2471e8163da8e6f2c1dfd50ef9063199c08b";
   };
 
 
