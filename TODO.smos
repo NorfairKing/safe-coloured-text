@@ -1,0 +1,12 @@
+version: 1.0.0
+value:
+- header: A type that composes nicer than [[Chunk]]
+  contents: |-
+    with helper functions like the ones we have for text:
+    lines, unlines, etc
+
+    indent
+- renderChunkssBS with lines
+- header: text width problem
+  properties:
+    url: https://github.com/NorfairKing/smos/issues/190#issuecomment-780035170
