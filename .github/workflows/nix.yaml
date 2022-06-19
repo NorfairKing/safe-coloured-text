@@ -28,7 +28,9 @@ jobs:
           - ubuntu-latest
           - macos-latest
         lts:
+          - nixos-21_05
           - nixos-21_11
+          - nixos-22_05
           - release
 
     name: CI Build

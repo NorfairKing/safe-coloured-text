@@ -1,9 +1,9 @@
 { sources ? import ./sources.nix
-, pkgsf ? import sources.nixpkgs
+, nixpkgs ? sources.nixpkgs
 }:
 let
   safeColouredTextPkgs =
-    pkgsf {
+    import nixpkgs {
       overlays =
         [
           (import (sources.autodocodec + "/nix/overlay.nix"))
