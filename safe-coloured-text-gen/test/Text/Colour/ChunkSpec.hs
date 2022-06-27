@@ -18,19 +18,19 @@ spec = do
   let gf = ("test_resources/chunk/" ++)
   describe "renderChunk" $ do
     it "outputs plain text if the terminal has no colours" $
-      renderChunksBS WithoutColours [fore red "hello"] `shouldBe` "hello"
+      renderChunksText WithoutColours [fore red "hello"] `shouldBe` "hello"
     it "outputs plain text if the terminal has no colours and 256 are needed" $
-      renderChunksBS WithoutColours [fore (colour256 128) "hello"] `shouldBe` "hello"
+      renderChunksText WithoutColours [fore (colour256 128) "hello"] `shouldBe` "hello"
     it "outputs plain text if the terminal has only 8 colours and 256 are needed" $
-      renderChunksBS With8Colours [fore (colour256 128) "hello"] `shouldBe` "hello"
+      renderChunksText With8Colours [fore (colour256 128) "hello"] `shouldBe` "hello"
     it "outputs plain text if the terminal has no colours and 24bit colours are needed" $
-      renderChunksBS WithoutColours [fore (colourRGB 128 128 128) "hello"] `shouldBe` "hello"
+      renderChunksText WithoutColours [fore (colourRGB 128 128 128) "hello"] `shouldBe` "hello"
     it "outputs plain text if the terminal has only 8 colours and 24bit colours are needed" $
-      renderChunksBS With8Colours [fore (colourRGB 128 128 128) "hello"] `shouldBe` "hello"
+      renderChunksText With8Colours [fore (colourRGB 128 128 128) "hello"] `shouldBe` "hello"
     it "outputs plain text if the terminal has only 8bit colours and 24bit colours are needed" $
-      renderChunksBS With8BitColours [fore (colourRGB 128 128 128) "hello"] `shouldBe` "hello"
+      renderChunksText With8BitColours [fore (colourRGB 128 128 128) "hello"] `shouldBe` "hello"
     it "outputs a plain chunk the same as before" $
-      pureGoldenByteStringFile (gf "plain.dat") (renderChunkBS With24BitColours (chunk "ook"))
+      pureGoldenTextFile (gf "plain.dat") (renderChunkText With24BitColours (chunk "ook"))
     describe "8 colours" $ do
       let gf8 = ("test_resources/chunk/8/" ++)
       let chunks string = justAFew $ do
@@ -101,7 +101,7 @@ spec = do
 
       forM_ (chunks "ook") $ \(name, path, c) ->
         it (unwords ["outputs a", name, "the same way as before"]) $
-          pureGoldenByteStringFile (gf8 path) (renderChunkBS With24BitColours c)
+          pureGoldenTextFile (gf8 path) (renderChunkText With24BitColours c)
     describe "8bit colours" $ do
       let gf8bit = ("test_resources/chunk/8bit/" ++)
       let chunks string = justAFew $ do
@@ -133,7 +133,7 @@ spec = do
 
       forM_ (chunks "ook") $ \(name, path, c) ->
         it (unwords ["outputs a", name, "the same way as before"]) $
-          pureGoldenByteStringFile (gf8bit path) (renderChunkBS With24BitColours c)
+          pureGoldenTextFile (gf8bit path) (renderChunkText With24BitColours c)
     describe "24bit colours" $ do
       let gf24bit = ("test_resources/chunk/24bit/" ++)
       let chunks string = justAFew $ do
@@ -170,7 +170,7 @@ spec = do
 
       forM_ (chunks "ook") $ \(name, path, c) ->
         it (unwords ["outputs a", name, "the same way as before"]) $
-          pureGoldenByteStringFile (gf24bit path) (renderChunkBS With24BitColours c)
+          pureGoldenTextFile (gf24bit path) (renderChunkText With24BitColours c)
     describe "super fancy" $ do
       it "outputs this super fancy thing the same way as before" $
         let bc c = back c $ chunk " "
@@ -190,7 +190,7 @@ spec = do
                     ["\n8 bit colours:"] : map (map bc) colour8Bitss,
                     ["\n24 bit colours:"] : map (map bc) colour24Bitss
                   ]
-         in pureGoldenByteStringFile (gf "fancy.dat") (renderChunksBS With24BitColours cs)
+         in pureGoldenTextFile (gf "fancy.dat") (renderChunksText With24BitColours cs)
 
 chunksOf :: Int -> [a] -> [[a]]
 chunksOf w l

@@ -11,7 +11,7 @@ spec = do
   let gf = ("test_resources/csi/" ++)
   describe "renderCSI" $ do
     it "outputs a reset the same as before" $
-      pureGoldenByteStringFile (gf "reset.dat") (renderCSIBS (SGR [Reset]))
+      pureGoldenTextFile (gf "reset.dat") (renderCSIText (SGR [Reset]))
     describe "SGR" $ do
       let gf8 = ("test_resources/csi/8/" ++)
       describe "8 colours" $ do
@@ -27,11 +27,11 @@ spec = do
                   )
           forM_ sgrTests $ \(name, path, sgr) ->
             it (unwords ["outputs a", show name, "the same as before"]) $
-              pureGoldenByteStringFile (gf8 path) (renderCSIBS (SGR [sgr]))
+              pureGoldenTextFile (gf8 path) (renderCSIText (SGR [sgr]))
         it "outputs an dull red background with bright blue foreground the same as before" $ do
-          pureGoldenByteStringFile
+          pureGoldenTextFile
             (gf8 "two-colours.dat")
-            ( renderCSIBS
+            ( renderCSIText
                 ( SGR
                     [ SetColour Dull Background Red,
                       SetColour Bright Foreground Blue
@@ -39,9 +39,9 @@ spec = do
                 )
             )
         it "outputs an bold, italic, underlined, dull yellow background with bright green foreground the same as before" $ do
-          pureGoldenByteStringFile
+          pureGoldenTextFile
             (gf8 "complex.dat")
-            ( renderCSIBS
+            ( renderCSIText
                 ( SGR
                     [ SetItalic True,
                       SetUnderlining SingleUnderline,
@@ -55,9 +55,9 @@ spec = do
       describe "256 colours" $ do
         -- https://en.wikipedia.org/wiki/ANSI_escape_code#8-bit
         it "outputs a pink foreground colour with light blue background the same as before" $ do
-          pureGoldenByteStringFile
+          pureGoldenTextFile
             (gf256 "two-colours.dat")
-            ( renderCSIBS
+            ( renderCSIText
                 ( SGR
                     [ SetColour Dull Background Red,
                       SetColour Bright Foreground Blue

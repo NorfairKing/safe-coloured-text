@@ -4,11 +4,13 @@
 module Text.Colour.Code where
 
 import Data.ByteString (ByteString)
-import Data.ByteString.Builder (Builder)
-import qualified Data.ByteString.Builder as SBB
-import qualified Data.ByteString.Internal as SBI
-import qualified Data.ByteString.Lazy as LB
 import Data.List
+import Data.Text (Text)
+import qualified Data.Text.Encoding as TE
+import qualified Data.Text.Lazy as LT
+import qualified Data.Text.Lazy.Builder as LTB
+import qualified Data.Text.Lazy.Builder as Text
+import qualified Data.Text.Lazy.Builder.Int as LTB
 import Data.Validity
 import Data.Validity.ByteString ()
 import Data.Validity.Text ()
@@ -16,14 +18,14 @@ import Data.Word
 import GHC.Generics (Generic)
 
 -- https://en.wikipedia.org/wiki/Escape_character#ASCII_escape_character
-asciiEscape :: Word8
-asciiEscape = SBI.c2w '\ESC'
+asciiEscape :: Char
+asciiEscape = '\ESC'
 
-csiStart :: Word8
-csiStart = SBI.c2w '['
+csiStart :: Char
+csiStart = '['
 
-csiDelimiter :: Word8
-csiDelimiter = SBI.c2w ';'
+csiDelimiter :: Char
+csiDelimiter = ';'
 
 newtype CSI
   = SGR [SGR]
@@ -31,24 +33,39 @@ newtype CSI
 
 instance Validity CSI
 
--- | Render a CSI directly to bytestring.
+-- | Render a CSI directly to 'ByteString' using UTF8.
+--
 -- You probably want to use 'renderCSI' instead.
 -- This is just for testing.
-renderCSIBS :: CSI -> ByteString
-renderCSIBS = LB.toStrict . SBB.toLazyByteString . renderCSI
+renderCSIUtf8BS :: CSI -> ByteString
+renderCSIUtf8BS = TE.encodeUtf8 . renderCSIText
+
+-- | Render a CSI directly to strict 'Text'.
+--
+-- You probably want to use 'renderCSI' instead.
+-- This is just for testing.
+renderCSIText :: CSI -> Text
+renderCSIText = LT.toStrict . renderCSILazyText
+
+-- | Render a CSI directly to lazy 'LT.Text'.
+--
+-- You probably want to use 'renderCSI' instead.
+-- This is just for testing.
+renderCSILazyText :: CSI -> LT.Text
+renderCSILazyText = LTB.toLazyText . renderCSI
 
 -- https://en.wikipedia.org/wiki/ANSI_escape_code#CSI_(Control_Sequence_Introducer)_sequences
-renderCSI :: CSI -> Builder
+renderCSI :: CSI -> Text.Builder
 renderCSI =
   let csi ps c =
         mconcat
-          [ SBB.word8 asciiEscape,
-            SBB.word8 csiStart,
-            csiParamsToWords ps,
-            SBB.word8 c
+          [ LTB.singleton asciiEscape,
+            LTB.singleton csiStart,
+            renderCSIParams ps,
+            LTB.singleton c
           ]
    in \case
-        SGR sgrs -> csi (concatMap sgrToCSIParams sgrs) (SBI.c2w 'm')
+        SGR sgrs -> csi (concatMap sgrToCSIParams sgrs) 'm'
 
 -- https://en.wikipedia.org/wiki/ANSI_escape_code#SGR_(Select_Graphic_Rendition)_parameters
 data SGR
@@ -67,13 +84,13 @@ data SGR
 
 instance Validity SGR
 
-csiParamsToWords :: [Word8] -> Builder
-csiParamsToWords = mconcat . intersperse (SBB.word8 csiDelimiter) . map csiParamToWord
+renderCSIParams :: [Word8] -> Text.Builder
+renderCSIParams = mconcat . intersperse (LTB.singleton csiDelimiter) . map renderCSIParam
 
-csiParamToWord :: Word8 -> Builder
-csiParamToWord = \case
+renderCSIParam :: Word8 -> Text.Builder
+renderCSIParam = \case
   0 -> mempty
-  w -> SBB.word8Dec w
+  w -> LTB.decimal w
 
 sgrToCSIParams :: SGR -> [Word8]
 sgrToCSIParams = \case

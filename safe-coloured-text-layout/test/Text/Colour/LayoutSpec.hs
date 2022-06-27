@@ -12,9 +12,9 @@ spec = do
   let gf = ("test_resources/" ++)
   describe "layoutAsTable" $ do
     it "outputs this list the same as before" $ do
-      pureGoldenByteStringFile
+      pureGoldenTextFile
         (gf "list.dat")
-        ( renderChunksBS
+        ( renderChunksText
             With24BitColours
             ( layoutAsTable
                 [ ["this"],
@@ -25,9 +25,9 @@ spec = do
             )
         )
     it "outputs this two-column table the same as before" $ do
-      pureGoldenByteStringFile
+      pureGoldenTextFile
         (gf "two-columns.dat")
-        ( renderChunksBS
+        ( renderChunksText
             With24BitColours
             ( layoutAsTable
                 [ ["this", "this"],
@@ -38,9 +38,9 @@ spec = do
             )
         )
     it "outputs this weird two-column table the same as before" $ do
-      pureGoldenByteStringFile
+      pureGoldenTextFile
         (gf "table-with-rows-of-unequal-length.dat")
-        ( renderChunksBS
+        ( renderChunksText
             With24BitColours
             ( layoutAsTable
                 [ ["what", "the", ""],
@@ -50,9 +50,9 @@ spec = do
             )
         )
     it "outputs this two-column table with a custom column separator the same as before" $ do
-      pureGoldenByteStringFile
+      pureGoldenTextFile
         (gf "custom-column-separator.dat")
-        ( renderChunksBS
+        ( renderChunksText
             With24BitColours
             ( renderTable $
                 ( table $ [[chunk (T.pack (show (x + y))) | x <- [0 :: Int .. 9]] | y <- [0 :: Int .. 9]]
@@ -62,9 +62,9 @@ spec = do
             )
         )
     it "outputs this table with a background colour the same as before" $ do
-      pureGoldenByteStringFile
+      pureGoldenTextFile
         (gf "background.dat")
-        ( renderChunksBS
+        ( renderChunksText
             With24BitColours
             ( renderTable $
                 ( table $ [[fore red $ chunk (T.pack (show (x ^ y))) | x <- [0 :: Int .. 4]] | y <- [0 :: Int .. 4]]
@@ -74,9 +74,9 @@ spec = do
             )
         )
     it "outputs this table with a bicoloured background the same as before" $ do
-      pureGoldenByteStringFile
+      pureGoldenTextFile
         (gf "bicolour-background.dat")
-        ( renderChunksBS
+        ( renderChunksText
             With24BitColours
             ( renderTable $
                 ( table $ [[fore red $ chunk (T.pack (show (x ^ y))) | x <- [0 :: Int .. 4]] | y <- [0 :: Int .. 4]]

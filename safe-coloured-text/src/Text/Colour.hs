@@ -66,9 +66,21 @@ module Text.Colour
     renderChunks,
     renderChunk,
 
-    -- ** Rendering chunks to strict bytestring
+    -- ** Rendering chunks to strict bytestring in UTF8
+    renderChunksUtf8BS,
+    renderChunkUtf8BS,
+
+    -- ** Decrecated rendering chunks to strict bytestring in UTF8
     renderChunksBS,
     renderChunkBS,
+
+    -- ** Rendering chunks to strict Text
+    renderChunksText,
+    renderChunkText,
+
+    -- ** Rendering chunks to lazy text
+    renderChunksLazyText,
+    renderChunkLazyText,
 
     -- * IO
     TerminalCapabilities (..),
@@ -79,7 +91,7 @@ module Text.Colour
   )
 where
 
-import qualified Data.ByteString.Builder as SBB
+import qualified Data.Text.IO as TIO
 import System.IO
 import Text.Colour.Capabilities
 import Text.Colour.Chunk
@@ -90,4 +102,4 @@ putChunksWith tc = hPutChunksWith tc stdout
 
 -- | Print a list of chunks to the given 'Handle' with given 'TerminalCapabilities'.
 hPutChunksWith :: TerminalCapabilities -> Handle -> [Chunk] -> IO ()
-hPutChunksWith tc h cs = SBB.hPutBuilder h $ renderChunks tc cs
+hPutChunksWith tc h cs = TIO.hPutStr h $ renderChunksText tc cs

@@ -5,13 +5,15 @@
 module Text.Colour.Chunk where
 
 import Data.ByteString (ByteString)
-import Data.ByteString.Builder (Builder)
-import qualified Data.ByteString.Builder as SBB
-import qualified Data.ByteString.Lazy as LB
+import qualified Data.ByteString.Builder as ByteString
 import Data.Maybe
 import Data.String
 import Data.Text (Text)
 import qualified Data.Text.Encoding as TE
+import qualified Data.Text.Lazy as LT
+import qualified Data.Text.Lazy.Builder as LTB
+import qualified Data.Text.Lazy.Builder as Text
+import qualified Data.Text.Lazy.Encoding as LTE
 import Data.Validity
 import Data.Word
 import GHC.Generics (Generic)
@@ -49,27 +51,71 @@ plainColour tc = \case
   Colour8Bit {} -> tc < With8BitColours
   Colour24Bit {} -> tc < With24BitColours
 
--- | Render a chunk directly to bytestring.
+-- | Render chunks directly to a UTF8-encoded 'Bytestring'.
+renderChunksUtf8BS :: Foldable f => TerminalCapabilities -> f Chunk -> ByteString
+renderChunksUtf8BS tc = TE.encodeUtf8 . renderChunksText tc
+
+-- | Deprecated synonym for 'renderChunksUtf8BS'
 renderChunksBS :: Foldable f => TerminalCapabilities -> f Chunk -> ByteString
-renderChunksBS tc = LB.toStrict . SBB.toLazyByteString . renderChunks tc
+renderChunksBS = renderChunksUtf8BS
+{-# DEPRECATED renderChunksBS "Use renderChunksText, or renderChunksUtf8BS if you must." #-}
 
--- | Render chunks to a bytestring builder
-renderChunks :: Foldable f => TerminalCapabilities -> f Chunk -> Builder
-renderChunks tc = foldMap (renderChunk tc)
+-- | Render chunks to a UTF8-encoded 'ByteString' 'Bytestring.Builder'.
+renderChunksUtf8BSBuilder :: Foldable f => TerminalCapabilities -> f Chunk -> ByteString.Builder
+renderChunksUtf8BSBuilder tc = foldMap (renderChunkUtf8BSBuilder tc)
 
--- | Render a chunk directly to bytestring.
+-- | Deprecated synonym for 'renderChunksUtf8BSBuilder'
+renderChunks :: Foldable f => TerminalCapabilities -> f Chunk -> ByteString.Builder
+renderChunks = renderChunksUtf8BSBuilder
+{-# DEPRECATED renderChunks "Use renderChunksBuilder, or renderChunksUtf8BSBuilder if you must." #-}
+
+-- | Render chunks directly to strict 'Text'.
+renderChunksText :: Foldable f => TerminalCapabilities -> f Chunk -> Text
+renderChunksText tc = LT.toStrict . renderChunksLazyText tc
+
+-- | Render chunks directly to lazy 'LT.Text'.
+renderChunksLazyText :: Foldable f => TerminalCapabilities -> f Chunk -> LT.Text
+renderChunksLazyText tc = LTB.toLazyText . renderChunksBuilder tc
+
+-- | Render chunks to a lazy 'LT.Text' 'Text.Builder'
+renderChunksBuilder :: Foldable f => TerminalCapabilities -> f Chunk -> Text.Builder
+renderChunksBuilder tc = foldMap (renderChunkBuilder tc)
+
+-- | Render a chunk directly to a UTF8-encoded 'Bytestring'.
+renderChunkUtf8BS :: TerminalCapabilities -> Chunk -> ByteString
+renderChunkUtf8BS tc = TE.encodeUtf8 . renderChunkText tc
+
+-- | Deprecated synonym for 'renderChunkUtf8BS'
 renderChunkBS :: TerminalCapabilities -> Chunk -> ByteString
-renderChunkBS tc = LB.toStrict . SBB.toLazyByteString . renderChunk tc
+renderChunkBS = renderChunkUtf8BS
+{-# DEPRECATED renderChunkBS "Use renderChunkText, or renderChunkUtf8BS if you must." #-}
 
--- | Render a chunk to a bytestring builder
-renderChunk :: TerminalCapabilities -> Chunk -> Builder
-renderChunk tc c@Chunk {..} =
+-- | Render a chunk directly to a UTF8-encoded 'Bytestring' 'ByteString.Builder'.
+renderChunkUtf8BSBuilder :: TerminalCapabilities -> Chunk -> ByteString.Builder
+renderChunkUtf8BSBuilder tc = LTE.encodeUtf8Builder . renderChunkLazyText tc
+
+-- | Deprecated synonym for 'renderChunkUtf8BSBuilder'
+renderChunk :: TerminalCapabilities -> Chunk -> ByteString.Builder
+renderChunk = renderChunkUtf8BSBuilder
+{-# DEPRECATED renderChunk "Use renderChunkBuilder, or renderChunkUtf8BSBuilder if you must." #-}
+
+-- | Render a chunk directly to strict 'Text'.
+renderChunkText :: TerminalCapabilities -> Chunk -> Text
+renderChunkText tc = LT.toStrict . renderChunkLazyText tc
+
+-- | Render a chunk directly to strict 'LT.Text'.
+renderChunkLazyText :: TerminalCapabilities -> Chunk -> LT.Text
+renderChunkLazyText tc = LTB.toLazyText . renderChunkBuilder tc
+
+-- | Render a chunk to a lazy 'LT.Text' 'Text.Builder'
+renderChunkBuilder :: TerminalCapabilities -> Chunk -> Text.Builder
+renderChunkBuilder tc c@Chunk {..} =
   if plainChunk tc c
-    then SBB.byteString (TE.encodeUtf8 chunkText)
+    then LTB.fromText chunkText
     else
       mconcat
-        [ renderCSI (SGR $ chunkSGR tc c),
-          SBB.byteString (TE.encodeUtf8 chunkText),
+        [ renderCSI (SGR (chunkSGR tc c)),
+          LTB.fromText chunkText,
           renderCSI (SGR [Reset])
         ]
 

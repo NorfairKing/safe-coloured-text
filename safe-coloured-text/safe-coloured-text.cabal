@@ -1,11 +1,11 @@
 cabal-version: 1.12
 
--- This file has been generated from package.yaml by hpack version 0.34.4.
+-- This file has been generated from package.yaml by hpack version 0.34.7.
 --
 -- see: https://github.com/sol/hpack
 
 name:           safe-coloured-text
-version:        0.1.0.0
+version:        0.1.0.1
 synopsis:       Safely output coloured text
 category:       User Interfaces
 homepage:       https://github.com/NorfairKing/safe-coloured-text#readme
