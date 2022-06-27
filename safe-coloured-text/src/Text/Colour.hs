@@ -62,10 +62,6 @@ module Text.Colour
 
     -- * Rendering
 
-    -- ** Rendering chunks to bytestring builders
-    renderChunks,
-    renderChunk,
-
     -- ** Rendering chunks to strict bytestring in UTF8
     renderChunksUtf8BS,
     renderChunkUtf8BS,
@@ -74,6 +70,14 @@ module Text.Colour
     renderChunksBS,
     renderChunkBS,
 
+    -- ** Rendering chunks to lazy bytestring builders in UTF8
+    renderChunksUtf8BSBuilder,
+    renderChunkUtf8BSBuilder,
+
+    -- ** Deprecated rendering chunks to lazy bytestring builders in UTF8
+    renderChunks,
+    renderChunk,
+
     -- ** Rendering chunks to strict Text
     renderChunksText,
     renderChunkText,
@@ -81,6 +85,10 @@ module Text.Colour
     -- ** Rendering chunks to lazy text
     renderChunksLazyText,
     renderChunkLazyText,
+
+    -- ** Rendering chunks to lazy text builder
+    renderChunksBuilder,
+    renderChunkBuilder,
 
     -- * IO
     TerminalCapabilities (..),
