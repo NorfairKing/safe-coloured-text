@@ -5,10 +5,10 @@
         "homepage": null,
         "owner": "NorfairKing",
         "repo": "autodocodec",
-        "rev": "176a4eced34c80384317978001606fb2f7b16546",
-        "sha256": "0dsbx52v1y063xm0qpbc3ia7d9zai3h2y93grv13rbnppsapbq79",
+        "rev": "479390d82e4fb2a404c497d6b9a9fec1505b1e5e",
+        "sha256": "15m7l47vx4a99lkcrpx4x2cllxszq9la3x08dma3n0gp312g7w05",
         "type": "tarball",
-        "url": "https://github.com/NorfairKing/autodocodec/archive/176a4eced34c80384317978001606fb2f7b16546.tar.gz",
+        "url": "https://github.com/NorfairKing/autodocodec/archive/479390d82e4fb2a404c497d6b9a9fec1505b1e5e.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "gitignore": {
@@ -101,10 +101,10 @@
         "homepage": "",
         "owner": "NorfairKing",
         "repo": "sydtest",
-        "rev": "e2d8701749023e9fa4703a85d831e0d3c18fda79",
-        "sha256": "1k17avkpgnk766l34jlnz9ydn16l9nllc56vm4hrnxfc01dbxys7",
+        "rev": "130de92053c1c3d60a8f45d509210415ffbea530",
+        "sha256": "1873sjmmxfmf2iig5p1ka0y7n7n1zmiv92d6pq4cyc9a2f10184a",
         "type": "tarball",
-        "url": "https://github.com/NorfairKing/sydtest/archive/e2d8701749023e9fa4703a85d831e0d3c18fda79.tar.gz",
+        "url": "https://github.com/NorfairKing/sydtest/archive/130de92053c1c3d60a8f45d509210415ffbea530.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
     "validity": {

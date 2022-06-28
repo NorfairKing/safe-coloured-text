@@ -10,13 +10,13 @@ extra-deps:
 - envparse-0.4.1@sha256:989902e6368532548f61de1fa245ad2b39176cddd8743b20071af519a709ce30,2842
 
 - github: NorfairKing/sydtest
-  commit: e2d8701749023e9fa4703a85d831e0d3c18fda79
+  commit: 130de92053c1c3d60a8f45d509210415ffbea530
   subdirs:
   - sydtest
   - sydtest-discover
 
 - github: NorfairKing/autodocodec
-  commit: 176a4eced34c80384317978001606fb2f7b16546
+  commit: 479390d82e4fb2a404c497d6b9a9fec1505b1e5e
   subdirs:
   - autodocodec
   - autodocodec-schema

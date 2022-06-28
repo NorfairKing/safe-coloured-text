@@ -4,7 +4,7 @@
 
 ### Changed
 
-* The default output of the library is now Text, so that the encoding is not chosen for the user.
+* The default output of the library is now `Text`, so that the encoding is not chosen for the user.
   Existing functions for rendering to `ByteString`s have been deprecated but not removed.
 * Internal character constants have been changed from `Word8` to `Char`.
 
