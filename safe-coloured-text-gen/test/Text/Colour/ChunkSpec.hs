@@ -42,6 +42,7 @@ spec = do
             chunkItalic <- Nothing : map Just [minBound .. maxBound]
             chunkConsoleIntensity <- Nothing : map Just [minBound .. maxBound]
             chunkUnderlining <- Nothing : map Just [minBound .. maxBound]
+            chunkBlinking <- Nothing : map Just [minBound .. maxBound]
             chunkForeground <- mColour
             chunkBackground <- mColour
             let chunkText = T.pack string
@@ -56,6 +57,11 @@ spec = do
                   SingleUnderline -> "underline"
                   DoubleUnderline -> "double underline"
                   NoUnderline -> "no underline"
+                blinkingName :: Blinking -> String
+                blinkingName = \case
+                  SlowBlinking -> "slow blinking"
+                  RapidBlinking -> "rapid blinking"
+                  NoBlinking -> "no underline"
                 name =
                   unwords $
                     filter
@@ -63,6 +69,7 @@ spec = do
                       [ maybe "" italicName chunkItalic,
                         maybe "" consoleIntensityName chunkConsoleIntensity,
                         maybe "" underliningName chunkUnderlining,
+                        maybe "" blinkingName chunkBlinking,
                         string,
                         "with",
                         mColourName chunkForeground,
@@ -82,6 +89,11 @@ spec = do
                   SingleUnderline -> "underline"
                   DoubleUnderline -> "double-underline"
                   NoUnderline -> "no-underline"
+                blinkingPath :: Blinking -> String
+                blinkingPath = \case
+                  SlowBlinking -> "slow-blinking"
+                  RapidBlinking -> "rapid-blinking"
+                  NoBlinking -> "no-underline"
                 path =
                   intercalate
                     "-"
@@ -90,6 +102,7 @@ spec = do
                         [ maybe "" italicPath chunkItalic,
                           maybe "" consoleIntensityPath chunkConsoleIntensity,
                           maybe "" underliningPath chunkUnderlining,
+                          maybe "" blinkingPath chunkBlinking,
                           mColourPath chunkForeground,
                           "fg",
                           mColourPath chunkBackground,
@@ -110,6 +123,7 @@ spec = do
             let chunkItalic = Nothing
             let chunkConsoleIntensity = Nothing
             let chunkUnderlining = Nothing
+            let chunkBlinking = Nothing
             chunkForeground <- mColour
             chunkBackground <- mColour
             let chunkText = T.pack string
@@ -147,6 +161,7 @@ spec = do
             let chunkItalic = Nothing
             let chunkConsoleIntensity = Nothing
             let chunkUnderlining = Nothing
+            let chunkBlinking = Nothing
             chunkForeground <- mColour
             chunkBackground <- mColour
             let chunkText = T.pack string

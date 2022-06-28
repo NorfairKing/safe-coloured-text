@@ -72,6 +72,7 @@ data SGR
   = Reset
   | SetItalic !Bool
   | SetUnderlining !Underlining
+  | SetBlinking !Blinking
   | SetConsoleIntensity !ConsoleIntensity
   | SetColour !ColourIntensity !ConsoleLayer !TerminalColour
   | Set8BitColour !ConsoleLayer !Word8
@@ -101,6 +102,12 @@ sgrToCSIParams = \case
         SingleUnderline -> 4
         DoubleUnderline -> 21
         NoUnderline -> 24
+    ]
+  SetBlinking b ->
+    [ case b of
+        SlowBlinking -> 5
+        RapidBlinking -> 6
+        NoBlinking -> 25
     ]
   SetConsoleIntensity ci ->
     [ case ci of
@@ -142,6 +149,15 @@ data Underlining
   deriving (Show, Eq, Generic, Bounded, Enum)
 
 instance Validity Underlining
+
+-- | ANSI text blinking
+data Blinking
+  = SlowBlinking
+  | RapidBlinking
+  | NoBlinking
+  deriving (Show, Eq, Generic, Bounded, Enum)
+
+instance Validity Blinking
 
 -- | ANSI general console intensity: usually treated as setting the font style
 -- (e.g. 'BoldIntensity' causes text to be bold)

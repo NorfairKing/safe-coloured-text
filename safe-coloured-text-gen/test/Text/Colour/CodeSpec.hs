@@ -1,3 +1,5 @@
+{-# LANGUAGE OverloadedStrings #-}
+
 module Text.Colour.CodeSpec (spec) where
 
 import Control.Monad
@@ -38,18 +40,24 @@ spec = do
                     ]
                 )
             )
-        it "outputs an bold, italic, underlined, dull yellow background with bright green foreground the same as before" $ do
+        it "outputs a blinking, bold, italic, underlined, dull yellow background with bright green foreground the same as before" $ do
           pureGoldenTextFile
             (gf8 "complex.dat")
-            ( renderCSIText
-                ( SGR
-                    [ SetItalic True,
-                      SetUnderlining SingleUnderline,
-                      SetConsoleIntensity BoldIntensity,
-                      SetColour Dull Background Yellow,
-                      SetColour Bright Foreground Green
-                    ]
-                )
+            ( mconcat
+                [ renderCSIText
+                    ( SGR
+                        [ SetItalic True,
+                          SetUnderlining SingleUnderline,
+                          SetBlinking SlowBlinking,
+                          SetConsoleIntensity BoldIntensity,
+                          SetColour Dull Background Yellow,
+                          SetColour Bright Foreground Green
+                        ]
+                    ),
+                  "hello world",
+                  renderCSIText
+                    (SGR [Reset])
+                ]
             )
       let gf256 = ("test_resources/csi/256/" ++)
       describe "256 colours" $ do

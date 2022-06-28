@@ -26,6 +26,10 @@ module Text.Colour
     italic,
     underline,
     doubleUnderline,
+    noUnderline,
+    slowBlinking,
+    rapidBlinking,
+    noBlinking,
 
     -- ** Colours
     Colour (..),

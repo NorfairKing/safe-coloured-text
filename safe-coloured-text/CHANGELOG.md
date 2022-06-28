@@ -1,5 +1,11 @@
 # Changelog for safe-coloured-text
 
+## [0.2.0.1] - 2022-06-29
+
+### Added
+
+* Support blinking text
+
 ## [0.2.0.0] - 2022-06-19
 
 ### Changed

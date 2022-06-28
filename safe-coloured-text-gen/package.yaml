@@ -1,5 +1,5 @@
 name:                safe-coloured-text-gen
-version:             0.0.0.0
+version:             0.0.0.1
 github:              "NorfairKing/safe-coloured-text"
 license:             MIT
 author:              "Tom Sydney Kerckhove"
@@ -7,6 +7,8 @@ maintainer:          "syd@cs-syd.eu"
 copyright:           "Copyright (c) 2020 Tom Sydney Kerckhove"
 description:         Generators for types in safe-coloured-text
 
+extra-source-files:
+- CHANGELOG.md
 
 dependencies:
 - base >= 4.7 && < 5

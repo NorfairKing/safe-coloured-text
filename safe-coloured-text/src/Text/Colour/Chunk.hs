@@ -1,6 +1,7 @@
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE RecordWildCards #-}
+{-# OPTIONS_GHC -Wno-unused-pattern-binds #-}
 
 module Text.Colour.Chunk where
 
@@ -25,6 +26,7 @@ data Chunk = Chunk
     chunkItalic :: !(Maybe Bool),
     chunkConsoleIntensity :: !(Maybe ConsoleIntensity),
     chunkUnderlining :: !(Maybe Underlining),
+    chunkBlinking :: !(Maybe Blinking),
     chunkForeground :: !(Maybe Colour),
     chunkBackground :: !(Maybe Colour)
   }
@@ -37,13 +39,15 @@ instance IsString Chunk where
 
 plainChunk :: TerminalCapabilities -> Chunk -> Bool
 plainChunk tc Chunk {..} =
-  and
-    [ isNothing chunkItalic,
-      isNothing chunkConsoleIntensity,
-      isNothing chunkUnderlining,
-      maybe True (plainColour tc) chunkForeground,
-      maybe True (plainColour tc) chunkBackground
-    ]
+  let Chunk _ _ _ _ _ _ _ = undefined
+   in and
+        [ isNothing chunkItalic,
+          isNothing chunkConsoleIntensity,
+          isNothing chunkUnderlining,
+          isNothing chunkBlinking,
+          maybe True (plainColour tc) chunkForeground,
+          maybe True (plainColour tc) chunkBackground
+        ]
 
 plainColour :: TerminalCapabilities -> Colour -> Bool
 plainColour tc = \case
@@ -137,6 +141,7 @@ chunk t =
       chunkItalic = Nothing,
       chunkConsoleIntensity = Nothing,
       chunkUnderlining = Nothing,
+      chunkBlinking = Nothing,
       chunkForeground = Nothing,
       chunkBackground = Nothing
     }
@@ -161,6 +166,18 @@ underline chu = chu {chunkUnderlining = Just SingleUnderline}
 
 doubleUnderline :: Chunk -> Chunk
 doubleUnderline chu = chu {chunkUnderlining = Just DoubleUnderline}
+
+noUnderline :: Chunk -> Chunk
+noUnderline chu = chu {chunkUnderlining = Just NoUnderline}
+
+slowBlinking :: Chunk -> Chunk
+slowBlinking chu = chu {chunkBlinking = Just SlowBlinking}
+
+rapidBlinking :: Chunk -> Chunk
+rapidBlinking chu = chu {chunkBlinking = Just RapidBlinking}
+
+noBlinking :: Chunk -> Chunk
+noBlinking chu = chu {chunkBlinking = Just NoBlinking}
 
 -- TODO consider allowing an 8-colour alternative to a given 256-colour
 data Colour
