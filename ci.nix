@@ -23,10 +23,4 @@ in
 {
   release = pkgs.safeColouredTextRelease;
   pre-commit-check = (import ./nix/pre-commit.nix { inherit sources; }).check;
-  hoogle = pkgs.buildEnv {
-    name = "hoogle";
-    paths = [
-      (pkgs.haskellPackages.ghcWithHoogle (_: pkgs.lib.attrValues pkgs.safeColouredTextPackages))
-    ];
-  };
 } // builtins.mapAttrs mkReleaseForVersion versions
