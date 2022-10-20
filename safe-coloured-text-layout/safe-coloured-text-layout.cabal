@@ -1,6 +1,6 @@
 cabal-version: 1.12
 
--- This file has been generated from package.yaml by hpack version 0.34.4.
+-- This file has been generated from package.yaml by hpack version 0.34.7.
 --
 -- see: https://github.com/sol/hpack
 
@@ -16,6 +16,13 @@ copyright:      Copyright (c) 2020 Tom Sydney Kerckhove
 license:        MIT
 license-file:   LICENSE
 build-type:     Simple
+extra-source-files:
+    test_resources/background.dat
+    test_resources/bicolour-background.dat
+    test_resources/custom-column-separator.dat
+    test_resources/list.dat
+    test_resources/table-with-rows-of-unequal-length.dat
+    test_resources/two-columns.dat
 
 source-repository head
   type: git

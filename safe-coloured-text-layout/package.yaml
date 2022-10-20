@@ -8,6 +8,9 @@ maintainer: "syd@cs-syd.eu"
 copyright: "Copyright (c) 2020 Tom Sydney Kerckhove"
 synopsis: Safely layout output coloured text
 
+extra-source-files:
+- test_resources/**/*
+
 dependencies:
 - base >= 4.7 && < 5
 

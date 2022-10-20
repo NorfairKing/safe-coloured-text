@@ -9,6 +9,7 @@ description:         Generators for types in safe-coloured-text
 
 extra-source-files:
 - CHANGELOG.md
+- test_resources/**/*
 
 dependencies:
 - base >= 4.7 && < 5
