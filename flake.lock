@@ -3,11 +3,11 @@
     "autodocodec": {
       "flake": false,
       "locked": {
-        "lastModified": 1695821570,
-        "narHash": "sha256-olMMLx1lUvwKKmqP5fUpoDIltHxsBVv7AV2k7z5+8O8=",
+        "lastModified": 1696500311,
+        "narHash": "sha256-gNHaCzDpl8RoS/4exiFfcNbc74WYzoKzfei5PVmrMbU=",
         "owner": "NorfairKing",
         "repo": "autodocodec",
-        "rev": "c8d56ace5b4c5b1137d9a8eaac11c64531e9be14",
+        "rev": "70e461ca718b791a64392239a29da5a8960c11d6",
         "type": "github"
       },
       "original": {
@@ -145,11 +145,11 @@
         "nixpkgs": "nixpkgs_2"
       },
       "locked": {
-        "lastModified": 1689631978,
-        "narHash": "sha256-qsH0saLmZyXuVbFiES3MgMpgVz+a1q1IUvn+jTV8Pvo=",
+        "lastModified": 1696499996,
+        "narHash": "sha256-wCLCfv1zWHb6LK+De9T62ESKvoZiyfxQKFQwKavnKR8=",
         "ref": "refs/heads/master",
-        "rev": "11e88f67a8c52df79e09d7e853478c74d75da0f3",
-        "revCount": 1085,
+        "rev": "01c848f002a0e6e91db1924a6304a226b96aef5e",
+        "revCount": 1087,
         "type": "git",
         "url": "https://gitlab.horizon-haskell.net/package-sets/horizon-core"
       },
@@ -325,11 +325,11 @@
     },
     "nixpkgs_3": {
       "locked": {
-        "lastModified": 1696323343,
-        "narHash": "sha256-u7WLUrh5eb+6SBYwtkaGL2ryHpLcHzmLml+a+VqKJWE=",
+        "lastModified": 1696374741,
+        "narHash": "sha256-gt8B3G0ryizT9HSB4cCO8QoxdbsHnrQH+/BdKxOwqF0=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "3b79cc4bcd9c09b5aa68ea1957c25e437dc6bc58",
+        "rev": "8a4c17493e5c39769f79117937c79e1c88de6729",
         "type": "github"
       },
       "original": {
@@ -425,11 +425,11 @@
     "validity": {
       "flake": false,
       "locked": {
-        "lastModified": 1696425031,
-        "narHash": "sha256-W6vrRbFLKhegb6dfCinFtq5mST2+m7DVhFKCb//BALg=",
+        "lastModified": 1696500368,
+        "narHash": "sha256-XpjzVbtd/bUT8KI/I73ElLiZhou6WlNFVKVU37DUeRs=",
         "owner": "NorfairKing",
         "repo": "validity",
-        "rev": "d2dbf4ea4b4fbe4495bffcf6efb06639461c8acc",
+        "rev": "c746939a47ac3c5889f17bd06f328e84b025cb8d",
         "type": "github"
       },
       "original": {
