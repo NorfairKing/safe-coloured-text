@@ -10,7 +10,6 @@
     nixpkgs-22_05.url = "github:NixOS/nixpkgs?ref=nixos-22.05";
     nixpkgs-21_11.url = "github:NixOS/nixpkgs?ref=nixos-21.11";
     pre-commit-hooks.url = "github:cachix/pre-commit-hooks.nix";
-    horizon-core.url = "git+https://gitlab.horizon-haskell.net/package-sets/horizon-core";
     autodocodec.url = "github:NorfairKing/autodocodec";
     autodocodec.flake = false;
     validity.url = "github:NorfairKing/validity";
@@ -28,7 +27,6 @@
     , nixpkgs-22_05
     , nixpkgs-21_11
     , pre-commit-hooks
-    , horizon-core
     , autodocodec
     , validity
     , fast-myers-diff
@@ -47,7 +45,6 @@
         inherit system;
         inherit overlays;
       };
-      horizonPkgs = horizon-core.legacyPackages.${system}.horizonReleasePkgFunc { inherit overlays; };
       pkgs = pkgsFor nixpkgs;
       overrides = pkgs.callPackage ./nix/overrides { };
     in
@@ -69,7 +66,6 @@
           backwardCompatibilityChecks = pkgs.lib.mapAttrs (_: nixpkgs: backwardCompatibilityCheckFor nixpkgs) allNixpkgs;
         in
         backwardCompatibilityChecks // {
-          forwardCompatibility = horizonPkgs.haskell.packages.ghcHEAD.safeColouredTextRelease;
           release = pkgs.haskellPackages.safeColouredTextRelease;
           pre-commit = pre-commit-hooks.lib.${system}.run {
             src = ./.;
