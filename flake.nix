@@ -47,21 +47,12 @@
         inherit system;
         inherit overlays;
       };
-      horizonPkgs = import nixpkgs {
-        inherit system;
-        overlays = [
-          (final: prev: {
-            haskellPackages = prev.haskellPackages.override (old: {
-              overrides = final.lib.composeExtensions (old.overrides or (_: _: { })) (self: super:
-                horizon-core.legacyPackages.${system} // super
-              );
-            });
-          })
-        ] ++ overlays;
-      };
+      horizonPkgs = horizon-core.legacyPackages.${system}.horizonReleasePkgFunc { inherit overlays; };
       pkgs = pkgsFor nixpkgs;
+      overrides = pkgs.callPackage ./nix/overrides { };
     in
     {
+      overrides.${system} = overrides;
       overlays.${system} = import ./nix/overlay.nix;
       packages.${system} = pkgs.haskellPackages.safeColouredTextPackages;
       checks.${system} =
@@ -78,7 +69,7 @@
           backwardCompatibilityChecks = pkgs.lib.mapAttrs (_: nixpkgs: backwardCompatibilityCheckFor nixpkgs) allNixpkgs;
         in
         backwardCompatibilityChecks // {
-          forwardCompatibility = horizonPkgs.haskellPackages.safeColouredTextRelease;
+          forwardCompatibility = horizonPkgs.haskell.packages.ghcHEAD.safeColouredTextRelease;
           release = pkgs.haskellPackages.safeColouredTextRelease;
           pre-commit = pre-commit-hooks.lib.${system}.run {
             src = ./.;

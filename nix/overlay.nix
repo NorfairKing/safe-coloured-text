@@ -1,34 +1,13 @@
 final: prev:
-with final.haskell.lib;
+let
+  overrides = final.callPackage ./overrides.nix { };
+  addOverrides = old: { overrides = final.lib.composeExtensions (old.overrides or (_: _: { })) overrides; };
+in
 {
-
-  haskellPackages = prev.haskellPackages.override (old: {
-    overrides = final.lib.composeExtensions (old.overrides or (_: _: { }))
-      (
-        self: super:
-          let
-            safeColouredTextPkg = name:
-              doBenchmark (buildStrictly (self.callPackage (../${name}/default.nix) { }));
-            safeColouredTextPackages =
-              final.lib.genAttrs [
-                "safe-coloured-text"
-                "safe-coloured-text-gen"
-                "safe-coloured-text-layout"
-                "safe-coloured-text-layout-gen"
-                "safe-coloured-text-terminfo"
-
-              ]
-                safeColouredTextPkg;
-          in
-          {
-            inherit safeColouredTextPackages;
-
-            safeColouredTextRelease =
-              final.symlinkJoin {
-                name = "safe-coloured-text-release";
-                paths = final.lib.attrValues self.safeColouredTextPackages;
-              };
-          } // safeColouredTextPackages
-      );
-  });
+  haskell = prev.haskell // {
+    packages = builtins.mapAttrs
+      (compiler: haskellPackages: haskellPackages.override addOverrides)
+      prev.haskell.packages;
+  };
+  haskellPackages = prev.haskellPackages.override addOverrides;
 }
