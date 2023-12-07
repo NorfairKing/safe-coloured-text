@@ -5,7 +5,7 @@ cabal-version: 1.12
 -- see: https://github.com/sol/hpack
 
 name:           safe-coloured-text-gen
-version:        0.0.0.1
+version:        0.0.0.2
 description:    Generators for types in safe-coloured-text
 homepage:       https://github.com/NorfairKing/safe-coloured-text#readme
 bug-reports:    https://github.com/NorfairKing/safe-coloured-text/issues
