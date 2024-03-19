@@ -86,12 +86,12 @@ data SGR
 instance Validity SGR
 
 renderCSIParams :: [Word8] -> Text.Builder
-renderCSIParams = mconcat . intersperse (LTB.singleton csiDelimiter) . map renderCSIParam
+renderCSIParams = mconcat . intersperse (LTB.singleton csiDelimiter) . map LTB.decimal
 
-renderCSIParam :: Word8 -> Text.Builder
-renderCSIParam = \case
-  0 -> mempty
-  w -> LTB.decimal w
+-- renderCSIParam :: Word8 -> Text.Builder
+-- renderCSIParam = \case
+--   0 -> mempty
+--   w -> LTB.decimal w
 
 sgrToCSIParams :: SGR -> [Word8]
 sgrToCSIParams = \case
