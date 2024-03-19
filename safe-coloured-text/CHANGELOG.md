@@ -1,5 +1,11 @@
 # Changelog for safe-coloured-text
 
+## [0.2.0.2] - 2024-03-26
+
+### Changed
+
+* Fixed a rendering problem in iTerm.
+
 ## [0.2.0.1] - 2022-06-29
 
 ### Added
