@@ -1,5 +1,11 @@
 # Changelog for safe-coloured-text
 
+## [0.3.0.1] - 2024-03-26
+
+### Added
+
+* `unlinesChunks`
+
 ## [0.3.0.0] - 2024-03-26
 
 ### Removed

@@ -1,3 +1,5 @@
+{-# LANGUAGE OverloadedStrings #-}
+
 -- | Safe Coloured Text
 --
 -- This module is responsible for defining, building, and rendering coloured text.
@@ -66,6 +68,9 @@ module Text.Colour
 
     -- * Rendering
 
+    -- ** Composing chunks
+    unlinesChunks,
+
     -- ** Rendering chunks to strict bytestring in UTF8
     renderChunksUtf8BS,
     renderChunkUtf8BS,
@@ -118,3 +123,9 @@ hPutChunksUtf8With tc h cs = SBB.hPutBuilder h $ renderChunksUtf8BSBuilder tc cs
 -- | Print a list of chunks to the given 'Handle' with given 'TerminalCapabilities' in an encoding according to the system's locale.
 hPutChunksLocaleWith :: TerminalCapabilities -> Handle -> [Chunk] -> IO ()
 hPutChunksLocaleWith tc h cs = TIO.hPutStr h $ renderChunksText tc cs
+
+-- | Render lines of chunks.
+--
+-- This puts newlines ("\n") inbetween the lines.
+unlinesChunks :: [[Chunk]] -> [Chunk]
+unlinesChunks = concatMap (<> [chunk "\n"])
