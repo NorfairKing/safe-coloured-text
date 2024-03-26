@@ -2,7 +2,14 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE RecordWildCards #-}
 
-module Text.Colour.Layout where
+module Text.Colour.Layout
+  ( layoutAsTable,
+    table,
+    Table (..),
+    TableBackground (..),
+    renderTable,
+  )
+where
 
 import Control.Applicative
 import Data.List
@@ -11,9 +18,13 @@ import Data.Validity
 import GHC.Generics (Generic)
 import Text.Colour
 
+-- | Render as a default-settings table.
 layoutAsTable :: [[Chunk]] -> [Chunk]
 layoutAsTable = renderTable . table
 
+-- | Make a table with default settings
+--
+-- You can then update table settings by changing the fields in the resulting 'Table'.
 table :: [[Chunk]] -> Table
 table cs =
   Table
@@ -22,6 +33,7 @@ table cs =
       tableBackground = Nothing
     }
 
+-- | Table with separator and background settings
 data Table = Table
   { -- | A list of rows. They must be of the same length.
     tableCells :: [[Chunk]],
@@ -35,12 +47,15 @@ instance Validity Table
 data TableBackground
   = SingleColour Colour
   | Bicolour
-      (Maybe Colour) -- Even-numbered table rows (0-indexed)
-      (Maybe Colour) -- Odd-numbered table rows
+      (Maybe Colour)
+      -- ^ Even-numbered table rows (0-indexed)
+      (Maybe Colour)
+      -- ^ Odd-numbered table rows
   deriving (Show, Eq, Generic)
 
 instance Validity TableBackground
 
+-- | Render a table to chunks that can be rendered to text.
 renderTable :: Table -> [Chunk]
 renderTable Table {..} =
   let asColumns = transpose (padRows tableCells)

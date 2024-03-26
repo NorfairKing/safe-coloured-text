@@ -3,7 +3,7 @@
 }:
 mkDerivation {
   pname = "safe-coloured-text-layout";
-  version = "0.0.0.0";
+  version = "0.1.0.0";
   src = ./.;
   libraryHaskellDepends = [ base safe-coloured-text text validity ];
   testHaskellDepends = [

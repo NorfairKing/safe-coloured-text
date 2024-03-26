@@ -9,6 +9,7 @@ copyright: "Copyright (c) 2020 Tom Sydney Kerckhove"
 synopsis: Safely output coloured text
 
 extra-source-files:
+- LICENSE
 - CHANGELOG.md
 
 dependencies:

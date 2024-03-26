@@ -1,5 +1,5 @@
 name: safe-coloured-text-layout
-version: 0.0.0.0
+version: 0.1.0.0
 github: "NorfairKing/safe-coloured-text"
 license: MIT
 category: User Interfaces
@@ -9,6 +9,7 @@ copyright: "Copyright (c) 2020 Tom Sydney Kerckhove"
 synopsis: Safely layout output coloured text
 
 extra-source-files:
+- CHANGELOG.md
 - test_resources/**/*
 
 dependencies:
