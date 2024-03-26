@@ -1,5 +1,11 @@
 # Changelog for safe-coloured-text
 
+## [0.3.0.0] - 2024-03-26
+
+### Removed
+
+* Removed deprecated functions
+
 ## [0.2.0.2] - 2024-03-26
 
 ### Changed

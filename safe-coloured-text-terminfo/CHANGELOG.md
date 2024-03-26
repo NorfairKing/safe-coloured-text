@@ -1,5 +1,11 @@
 # Changelog for safe-coloured-text-terminfo
 
+## [0.2.0.0] - 2024-03-26
+
+### Removed
+
+* Removed deprecated functions
+
 ## [0.1.0.0] - 2022-06-19
 
 ### Changed

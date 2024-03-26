@@ -1,7 +1,7 @@
 { mkDerivation, base, lib, safe-coloured-text, terminfo }:
 mkDerivation {
   pname = "safe-coloured-text-terminfo";
-  version = "0.1.0.0";
+  version = "0.2.0.0";
   src = ./.;
   libraryHaskellDepends = [ base safe-coloured-text terminfo ];
   homepage = "https://github.com/NorfairKing/safe-coloured-text#readme";

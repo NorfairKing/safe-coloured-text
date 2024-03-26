@@ -59,19 +59,9 @@ plainColour tc = \case
 renderChunksUtf8BS :: Foldable f => TerminalCapabilities -> f Chunk -> ByteString
 renderChunksUtf8BS tc = TE.encodeUtf8 . renderChunksText tc
 
--- | Deprecated synonym for 'renderChunksUtf8BS'
-renderChunksBS :: Foldable f => TerminalCapabilities -> f Chunk -> ByteString
-renderChunksBS = renderChunksUtf8BS
-{-# DEPRECATED renderChunksBS "Use renderChunksText, or renderChunksUtf8BS if you must." #-}
-
 -- | Render chunks to a UTF8-encoded 'ByteString' 'Bytestring.Builder'.
 renderChunksUtf8BSBuilder :: Foldable f => TerminalCapabilities -> f Chunk -> ByteString.Builder
 renderChunksUtf8BSBuilder tc = foldMap (renderChunkUtf8BSBuilder tc)
-
--- | Deprecated synonym for 'renderChunksUtf8BSBuilder'
-renderChunks :: Foldable f => TerminalCapabilities -> f Chunk -> ByteString.Builder
-renderChunks = renderChunksUtf8BSBuilder
-{-# DEPRECATED renderChunks "Use renderChunksBuilder, or renderChunksUtf8BSBuilder if you must." #-}
 
 -- | Render chunks directly to strict 'Text'.
 renderChunksText :: Foldable f => TerminalCapabilities -> f Chunk -> Text
@@ -89,19 +79,9 @@ renderChunksBuilder tc = foldMap (renderChunkBuilder tc)
 renderChunkUtf8BS :: TerminalCapabilities -> Chunk -> ByteString
 renderChunkUtf8BS tc = TE.encodeUtf8 . renderChunkText tc
 
--- | Deprecated synonym for 'renderChunkUtf8BS'
-renderChunkBS :: TerminalCapabilities -> Chunk -> ByteString
-renderChunkBS = renderChunkUtf8BS
-{-# DEPRECATED renderChunkBS "Use renderChunkText, or renderChunkUtf8BS if you must." #-}
-
 -- | Render a chunk directly to a UTF8-encoded 'Bytestring' 'ByteString.Builder'.
 renderChunkUtf8BSBuilder :: TerminalCapabilities -> Chunk -> ByteString.Builder
 renderChunkUtf8BSBuilder tc = LTE.encodeUtf8Builder . renderChunkLazyText tc
-
--- | Deprecated synonym for 'renderChunkUtf8BSBuilder'
-renderChunk :: TerminalCapabilities -> Chunk -> ByteString.Builder
-renderChunk = renderChunkUtf8BSBuilder
-{-# DEPRECATED renderChunk "Use renderChunkBuilder, or renderChunkUtf8BSBuilder if you must." #-}
 
 -- | Render a chunk directly to strict 'Text'.
 renderChunkText :: TerminalCapabilities -> Chunk -> Text

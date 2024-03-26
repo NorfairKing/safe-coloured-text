@@ -3,7 +3,7 @@
 }:
 mkDerivation {
   pname = "safe-coloured-text";
-  version = "0.2.0.2";
+  version = "0.3.0.0";
   src = ./.;
   libraryHaskellDepends = [
     base bytestring text validity validity-bytestring validity-text

@@ -86,14 +86,6 @@ module Text.Colour
     renderChunksBuilder,
     renderChunkBuilder,
 
-    -- ** Decrecated rendering chunks to strict bytestring in UTF8
-    renderChunksBS,
-    renderChunkBS,
-
-    -- ** Deprecated rendering chunks to lazy bytestring builders in UTF8
-    renderChunks,
-    renderChunk,
-
     -- * IO
     TerminalCapabilities (..),
 
@@ -102,8 +94,6 @@ module Text.Colour
     putChunksLocaleWith,
     hPutChunksUtf8With,
     hPutChunksLocaleWith,
-    putChunksWith,
-    hPutChunksWith,
   )
 where
 
@@ -119,12 +109,7 @@ putChunksUtf8With tc = hPutChunksUtf8With tc stdout
 
 -- | Print a list of chunks to stdout with given 'TerminalCapabilities' in an encoding according to the system's locale.
 putChunksLocaleWith :: TerminalCapabilities -> [Chunk] -> IO ()
-putChunksLocaleWith tc = hPutChunksWith tc stdout
-
--- | Deprecated synonym of 'putChunksUtf8With'
-putChunksWith :: TerminalCapabilities -> [Chunk] -> IO ()
-putChunksWith = putChunksUtf8With
-{-# DEPRECATED putChunksWith "Use putChunksLocaleWith, or putChunksUtf8With if you must." #-}
+putChunksLocaleWith tc = hPutChunksLocaleWith tc stdout
 
 -- | Print a list of chunks to the given 'Handle' with given 'TerminalCapabilities'.
 hPutChunksUtf8With :: TerminalCapabilities -> Handle -> [Chunk] -> IO ()
@@ -133,8 +118,3 @@ hPutChunksUtf8With tc h cs = SBB.hPutBuilder h $ renderChunksUtf8BSBuilder tc cs
 -- | Print a list of chunks to the given 'Handle' with given 'TerminalCapabilities' in an encoding according to the system's locale.
 hPutChunksLocaleWith :: TerminalCapabilities -> Handle -> [Chunk] -> IO ()
 hPutChunksLocaleWith tc h cs = TIO.hPutStr h $ renderChunksText tc cs
-
--- | Deprecated synonym of 'hPutChunksUtf8With'
-hPutChunksWith :: TerminalCapabilities -> Handle -> [Chunk] -> IO ()
-hPutChunksWith = hPutChunksUtf8With
-{-# DEPRECATED hPutChunksWith "Use hPutChunksLocaleWith, or hPutChunksUtf8With if you must." #-}
