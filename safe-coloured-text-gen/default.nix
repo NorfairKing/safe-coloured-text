@@ -4,7 +4,7 @@
 }:
 mkDerivation {
   pname = "safe-coloured-text-gen";
-  version = "0.0.0.2";
+  version = "0.0.0.3";
   src = ./.;
   libraryHaskellDepends = [
     base genvalidity genvalidity-bytestring genvalidity-text

@@ -1,5 +1,5 @@
 name:                safe-coloured-text-gen
-version:             0.0.0.2
+version:             0.0.0.3
 github:              "NorfairKing/safe-coloured-text"
 license:             MIT
 author:              "Tom Sydney Kerckhove"
@@ -20,7 +20,7 @@ library:
   - genvalidity
   - genvalidity-bytestring
   - genvalidity-text
-  - safe-coloured-text
+  - safe-coloured-text >=0.3
 
 tests:
   safe-coloured-text-test:
