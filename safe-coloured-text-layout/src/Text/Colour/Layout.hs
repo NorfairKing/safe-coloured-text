@@ -47,10 +47,10 @@ instance Validity Table
 data TableBackground
   = SingleColour Colour
   | Bicolour
+      -- Even-numbered table rows (0-indexed)
       (Maybe Colour)
-      -- ^ Even-numbered table rows (0-indexed)
+      -- Odd-numbered table rows
       (Maybe Colour)
-      -- ^ Odd-numbered table rows
   deriving (Show, Eq, Generic)
 
 instance Validity TableBackground

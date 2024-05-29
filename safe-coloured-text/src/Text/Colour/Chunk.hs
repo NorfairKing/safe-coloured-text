@@ -56,23 +56,23 @@ plainColour tc = \case
   Colour24Bit {} -> tc < With24BitColours
 
 -- | Render chunks directly to a UTF8-encoded 'Bytestring'.
-renderChunksUtf8BS :: Foldable f => TerminalCapabilities -> f Chunk -> ByteString
+renderChunksUtf8BS :: (Foldable f) => TerminalCapabilities -> f Chunk -> ByteString
 renderChunksUtf8BS tc = TE.encodeUtf8 . renderChunksText tc
 
 -- | Render chunks to a UTF8-encoded 'ByteString' 'Bytestring.Builder'.
-renderChunksUtf8BSBuilder :: Foldable f => TerminalCapabilities -> f Chunk -> ByteString.Builder
+renderChunksUtf8BSBuilder :: (Foldable f) => TerminalCapabilities -> f Chunk -> ByteString.Builder
 renderChunksUtf8BSBuilder tc = foldMap (renderChunkUtf8BSBuilder tc)
 
 -- | Render chunks directly to strict 'Text'.
-renderChunksText :: Foldable f => TerminalCapabilities -> f Chunk -> Text
+renderChunksText :: (Foldable f) => TerminalCapabilities -> f Chunk -> Text
 renderChunksText tc = LT.toStrict . renderChunksLazyText tc
 
 -- | Render chunks directly to lazy 'LT.Text'.
-renderChunksLazyText :: Foldable f => TerminalCapabilities -> f Chunk -> LT.Text
+renderChunksLazyText :: (Foldable f) => TerminalCapabilities -> f Chunk -> LT.Text
 renderChunksLazyText tc = LTB.toLazyText . renderChunksBuilder tc
 
 -- | Render chunks to a lazy 'LT.Text' 'Text.Builder'
-renderChunksBuilder :: Foldable f => TerminalCapabilities -> f Chunk -> Text.Builder
+renderChunksBuilder :: (Foldable f) => TerminalCapabilities -> f Chunk -> Text.Builder
 renderChunksBuilder tc = foldMap (renderChunkBuilder tc)
 
 -- | Render a chunk directly to a UTF8-encoded 'Bytestring'.
