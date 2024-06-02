@@ -1,4 +1,4 @@
-resolver: lts-21.22
+resolver: lts-22.22
 packages:
 - safe-coloured-text
 - safe-coloured-text-gen
@@ -10,7 +10,7 @@ extra-deps:
 - envparse-0.4.1@sha256:989902e6368532548f61de1fa245ad2b39176cddd8743b20071af519a709ce30,2842
 
 - github: NorfairKing/sydtest
-  commit: 130de92053c1c3d60a8f45d509210415ffbea530
+  commit: 6be618a53366d2453ba55da6cddc119d6d589916
   subdirs:
   - sydtest
   - sydtest-discover
