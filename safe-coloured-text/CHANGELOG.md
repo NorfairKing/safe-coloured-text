@@ -1,5 +1,16 @@
 # Changelog for safe-coloured-text
 
+## Unreleased
+
+### Added
+
+* `unwordsChunks`
+
+### Changed
+
+* `padRows` now takes a table with arbitrary cells.
+* `layoutAsTable`, `table`, and `renderTable` now take lists of chunks as cells, instead of single chunks.
+
 ## [0.3.0.1] - 2024-03-26
 
 ### Added

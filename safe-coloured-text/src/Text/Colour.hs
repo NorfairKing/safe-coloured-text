@@ -70,6 +70,7 @@ module Text.Colour
 
     -- ** Composing chunks
     unlinesChunks,
+    unwordsChunks,
 
     -- ** Rendering chunks to strict bytestring in UTF8
     renderChunksUtf8BS,
@@ -103,6 +104,7 @@ module Text.Colour
 where
 
 import qualified Data.ByteString.Builder as SBB
+import Data.List (intercalate)
 import qualified Data.Text.IO as TIO
 import System.IO
 import Text.Colour.Capabilities
@@ -126,6 +128,12 @@ hPutChunksLocaleWith tc h cs = TIO.hPutStr h $ renderChunksText tc cs
 
 -- | Render lines of chunks.
 --
--- This puts newlines ("\n") inbetween the lines.
+-- This puts newlines ("\n") at the end of every list of chunks.
 unlinesChunks :: [[Chunk]] -> [Chunk]
 unlinesChunks = concatMap (<> [chunk "\n"])
+
+-- | Render lines of chunks.
+--
+-- This puts newlines (" ") inbetween the list of chunks.
+unwordsChunks :: [[Chunk]] -> [Chunk]
+unwordsChunks = intercalate [" "]

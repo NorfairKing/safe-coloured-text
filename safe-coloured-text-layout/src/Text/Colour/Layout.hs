@@ -1,6 +1,7 @@
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE RecordWildCards #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 
 module Text.Colour.Layout
   ( layoutAsTable,
@@ -17,15 +18,16 @@ import qualified Data.Text as T
 import Data.Validity
 import GHC.Generics (Generic)
 import Text.Colour
+import Text.Colour.Chunk
 
 -- | Render as a default-settings table.
-layoutAsTable :: [[Chunk]] -> [Chunk]
+layoutAsTable :: [[[Chunk]]] -> [Chunk]
 layoutAsTable = renderTable . table
 
 -- | Make a table with default settings
 --
 -- You can then update table settings by changing the fields in the resulting 'Table'.
-table :: [[Chunk]] -> Table
+table :: [[[Chunk]]] -> Table
 table cs =
   Table
     { tableCells = cs,
@@ -35,8 +37,8 @@ table cs =
 
 -- | Table with separator and background settings
 data Table = Table
-  { -- | A list of rows. They must be of the same length.
-    tableCells :: [[Chunk]],
+  { -- | A list of rows. They must be of the same total length.
+    tableCells :: [[[Chunk]]],
     tableColumnSeparator :: Chunk,
     tableBackground :: Maybe TableBackground
   }
@@ -58,41 +60,58 @@ instance Validity TableBackground
 -- | Render a table to chunks that can be rendered to text.
 renderTable :: Table -> [Chunk]
 renderTable Table {..} =
-  let asColumns = transpose (padRows tableCells)
-      addLengthsToColumn :: [Chunk] -> [(Int, Chunk)]
-      addLengthsToColumn = map (\c -> (T.length (chunkText c), c))
-      maxLengthOfColum :: [(Int, Chunk)] -> Int
+  let asColumns :: [[[Chunk]]]
+      asColumns = transpose (padRows [] tableCells)
+
+      addLengthsToColumn :: [[Chunk]] -> [(Int, [Chunk])]
+      addLengthsToColumn = map (\c -> (cellWidth c, c))
+      maxLengthOfColum :: [(Int, [Chunk])] -> Int
       maxLengthOfColum = maximum . map fst
-      padColumn :: Int -> [(Int, Chunk)] -> [(Chunk, Chunk)]
-      padColumn maxLength = map (\(l, c) -> (c, paddingChunk (maxLength - l) ' '))
-      padEntireColumn :: [(Int, Chunk)] -> [(Chunk, Chunk)]
+      padColumn :: Int -> [(Int, [Chunk])] -> [[Chunk]]
+      padColumn maxLength = map (\(l, c) -> c ++ [paddingChunk (maxLength - l) ' '])
+      padEntireColumn :: [(Int, [Chunk])] -> [[Chunk]]
       padEntireColumn col =
         let maxLength = maxLengthOfColum col
          in padColumn maxLength col
-      paddedColumns :: [[(Chunk, Chunk)]]
+      paddedColumns :: [[[Chunk]]]
       paddedColumns = map (padEntireColumn . addLengthsToColumn) asColumns
-      paddedRows :: [[(Chunk, Chunk)]]
+      paddedRows :: [[[Chunk]]]
       paddedRows = transpose paddedColumns
+
       withBg :: Int -> Chunk -> Chunk
       withBg i = possiblyAddBackground $ backgroundForRow i tableBackground
-      renderRow :: Int -> [(Chunk, Chunk)] -> [Chunk]
+      renderRow :: Int -> [[Chunk]] -> [Chunk]
       renderRow i = go
         where
+          go :: [[Chunk]] -> [Chunk]
           go [] = ["\n"]
-          go [(c, p)] = withBg i c : withBg i p : go []
-          go ((c1, p1) : t2 : rest) = withBg i c1 : withBg i p1 : withBg i tableColumnSeparator : go (t2 : rest)
+          go [cs] = map (withBg i) cs ++ go []
+          go (cs1 : cs2 : rest) =
+            map (withBg i) cs1
+              ++ [withBg i tableColumnSeparator]
+              ++ go (cs2 : rest)
    in concat $ iterateLikeInPython renderRow paddedRows
 
 iterateLikeInPython :: (Int -> a -> b) -> [a] -> [b]
 iterateLikeInPython f = zipWith f [0 ..]
 
-padRows :: [[Chunk]] -> [[Chunk]]
-padRows [] = []
-padRows css =
-  let withLengths = map (\ls -> (length ls, ls)) css
+-- | Make every row contain the same number of cells, irrespective of the
+-- width of the cells.
+--
+-- Use the first argument to fill as the extra cells.
+padRows :: forall a. a -> [[a]] -> [[a]]
+padRows _ [] = []
+padRows d css =
+  let withLengths :: [(Int, [a])]
+      withLengths = map (\ls -> (length ls, ls)) css
+      maximumLength :: Int
       maximumLength = maximum $ map fst withLengths
-      pad (l, cs) = cs ++ replicate (maximumLength - l) ""
+      pad :: (Int, [a]) -> [a]
+      pad (l, cs) = cs ++ replicate (maximumLength - l) d
    in map pad withLengths
+
+cellWidth :: [Chunk] -> Int
+cellWidth = sum . map chunkWidth
 
 paddingChunk :: Int -> Char -> Chunk
 paddingChunk l c = chunk $ T.pack $ replicate l c

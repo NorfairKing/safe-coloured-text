@@ -10,6 +10,7 @@ import qualified Data.ByteString.Builder as ByteString
 import Data.Maybe
 import Data.String
 import Data.Text (Text)
+import qualified Data.Text as T
 import qualified Data.Text.Encoding as TE
 import qualified Data.Text.Lazy as LT
 import qualified Data.Text.Lazy.Builder as LTB
@@ -36,6 +37,12 @@ instance Validity Chunk
 
 instance IsString Chunk where
   fromString = chunk . fromString
+
+-- TODO This is not correct because text-width is correct but it's a
+-- good place to put this so we can fix it later and it'll get fixed
+-- everywhere.
+chunkWidth :: Chunk -> Int
+chunkWidth = T.length . chunkText
 
 plainChunk :: TerminalCapabilities -> Chunk -> Bool
 plainChunk tc Chunk {..} =
