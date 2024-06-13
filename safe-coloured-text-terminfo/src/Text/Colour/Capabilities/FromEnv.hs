@@ -18,20 +18,25 @@ getTerminalCapabilitiesFromEnv = do
   case mTerm of
     Nothing -> pure WithoutColours
     Just term -> do
-      -- To support 24-bit colour:
-      -- https://unix.stackexchange.com/questions/450365/check-if-terminal-supports-24-bit-true-color
-      mct <- lookupEnv "COLORTERM"
-      pure $ case mct of
-        Just "truecolor" -> With24BitColours
-        Just "24bit" -> With24BitColours
-        _ ->
-          case Terminfo.getCapability term (Terminfo.tiGetNum "colors") of
-            Nothing -> WithoutColours
-            Just c
-              | c > 256 -> With24BitColours
-              | c >= 256 -> With8BitColours
-              | c >= 8 -> With8Colours
-              | otherwise -> WithoutColours
+      -- To support https://no-color.org/
+      mnc <- lookupEnv "NO_COLOR"
+      case mnc of
+        Just _ -> pure WithoutColours
+        Nothing -> do
+          -- To support 24-bit colour:
+          -- https://unix.stackexchange.com/questions/450365/check-if-terminal-supports-24-bit-true-color
+          mct <- lookupEnv "COLORTERM"
+          pure $ case mct of
+            Just "truecolor" -> With24BitColours
+            Just "24bit" -> With24BitColours
+            _ ->
+              case Terminfo.getCapability term (Terminfo.tiGetNum "colors") of
+                Nothing -> WithoutColours
+                Just c
+                  | c > 256 -> With24BitColours
+                  | c >= 256 -> With8BitColours
+                  | c >= 8 -> With8Colours
+                  | otherwise -> WithoutColours
 
 -- | Try to detect how many colours a given handle can handle.
 --
