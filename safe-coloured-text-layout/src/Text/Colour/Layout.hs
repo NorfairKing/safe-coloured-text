@@ -5,10 +5,12 @@
 
 module Text.Colour.Layout
   ( layoutAsTable,
+    layoutAsTableLines,
     table,
     Table (..),
     TableBackground (..),
     renderTable,
+    renderTableLines,
   )
 where
 
@@ -23,6 +25,9 @@ import Text.Colour.Chunk
 -- | Render as a default-settings table.
 layoutAsTable :: [[[Chunk]]] -> [Chunk]
 layoutAsTable = renderTable . table
+
+layoutAsTableLines :: [[[Chunk]]] -> [[Chunk]]
+layoutAsTableLines = renderTableLines . table
 
 -- | Make a table with default settings
 --
@@ -59,7 +64,10 @@ instance Validity TableBackground
 
 -- | Render a table to chunks that can be rendered to text.
 renderTable :: Table -> [Chunk]
-renderTable Table {..} =
+renderTable = unlinesChunks . renderTableLines
+
+renderTableLines :: Table -> [[Chunk]]
+renderTableLines Table {..} =
   let asColumns :: [[[Chunk]]]
       asColumns = transpose (padRows [] tableCells)
 
@@ -84,13 +92,13 @@ renderTable Table {..} =
       renderRow i = go
         where
           go :: [[Chunk]] -> [Chunk]
-          go [] = ["\n"]
+          go [] = []
           go [cs] = map (withBg i) cs ++ go []
           go (cs1 : cs2 : rest) =
             map (withBg i) cs1
               ++ [withBg i tableColumnSeparator]
               ++ go (cs2 : rest)
-   in concat $ iterateLikeInPython renderRow paddedRows
+   in iterateLikeInPython renderRow paddedRows
 
 iterateLikeInPython :: (Int -> a -> b) -> [a] -> [b]
 iterateLikeInPython f = zipWith f [0 ..]
