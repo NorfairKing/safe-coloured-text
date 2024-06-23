@@ -1,5 +1,12 @@
 # Changelog for safe-coloured-text-terminfo
 
+## [0.3.0.0] - 2024-06-23
+
+### Changed
+
+* `getTerminalCapabilitiesFromEnv` now supports the `NO_COLOR` env variable,
+  see https://no-color.org/
+
 ## [0.2.0.0] - 2024-03-26
 
 ### Removed
