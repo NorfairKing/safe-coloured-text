@@ -22,5 +22,6 @@ in
   safeColouredTextRelease = symlinkJoin {
     name = "safe-coloured-text-release";
     paths = attrValues self.safeColouredTextPackages;
+    passthru = self.safeColouredTextPackages;
   };
 } // safeColouredTextPackages

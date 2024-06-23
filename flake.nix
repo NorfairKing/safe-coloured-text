@@ -56,7 +56,7 @@
     {
       overrides.${system} = pkgs.callPackage ./nix/overrides.nix { };
       overlays.${system} = import ./nix/overlay.nix;
-      packages.${system} = haskellPackages.safeColouredTextPackages;
+      packages.${system}.default = haskellPackages.safeColouredTextRelease;
       checks.${system} =
         let
           backwardCompatibilityCheckFor = nixpkgs: (haskellPackagesFor nixpkgs).safeColouredTextRelease;
@@ -90,18 +90,11 @@
         packages = p: builtins.attrValues p.safeColouredTextPackages;
         withHoogle = true;
         doBenchmark = true;
-        buildInputs = (with pkgs; [
+        buildInputs = with pkgs; [
           niv
           zlib
           cabal-install
-        ]) ++ (with pre-commit-hooks.packages.${system};
-          [
-            hlint
-            hpack
-            nixpkgs-fmt
-            ormolu
-            cabal2nix
-          ]);
+        ] ++ self.checks.${system}.pre-commit.enabledPackages;
         shellHook = self.checks.${system}.pre-commit.shellHook;
       };
     };
