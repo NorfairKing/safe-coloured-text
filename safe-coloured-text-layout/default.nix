@@ -1,4 +1,4 @@
-{ mkDerivation, base, bytestring, lib, safe-coloured-text, sydtest
+{ mkDerivation, base, lib, safe-coloured-text, sydtest
 , sydtest-discover, text, validity
 }:
 mkDerivation {
@@ -6,9 +6,7 @@ mkDerivation {
   version = "0.2.0.0";
   src = ./.;
   libraryHaskellDepends = [ base safe-coloured-text text validity ];
-  testHaskellDepends = [
-    base bytestring safe-coloured-text sydtest text
-  ];
+  testHaskellDepends = [ base safe-coloured-text sydtest text ];
   testToolDepends = [ sydtest-discover ];
   homepage = "https://github.com/NorfairKing/safe-coloured-text#readme";
   description = "Safely layout output coloured text";

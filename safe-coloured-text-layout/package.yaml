@@ -32,7 +32,6 @@ tests:
     - -rtsopts
     - -with-rtsopts=-N
     dependencies:
-    - bytestring
     - safe-coloured-text
     - safe-coloured-text-layout
     - sydtest

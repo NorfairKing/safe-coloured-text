@@ -56,7 +56,6 @@ test-suite safe-coloured-text-layout-test
       sydtest-discover:sydtest-discover
   build-depends:
       base >=4.7 && <5
-    , bytestring
     , safe-coloured-text
     , safe-coloured-text-layout
     , sydtest
