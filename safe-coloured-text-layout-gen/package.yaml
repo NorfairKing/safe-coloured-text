@@ -1,5 +1,5 @@
 name:                safe-coloured-text-layout-gen
-version:             0.0.0.0
+version:             0.0.0.1
 github:              "NorfairKing/safe-coloured-text"
 license:             MIT
 author:              "Tom Sydney Kerckhove"
@@ -7,6 +7,9 @@ maintainer:          "syd@cs-syd.eu"
 copyright:           "Copyright (c) 2021 Tom Sydney Kerckhove"
 description:         Generators for types in safe-coloured-text-layout
 
+extra-source-files:
+- CHANGELOG.md
+- test_resources/**/*
 
 dependencies:
 - base >= 4.7 && < 5
@@ -30,7 +33,7 @@ tests:
     dependencies:
     - genvalidity-sydtest
     - safe-coloured-text
-    - safe-coloured-text-gen
     - safe-coloured-text-layout
     - safe-coloured-text-layout-gen
     - sydtest
+    - text

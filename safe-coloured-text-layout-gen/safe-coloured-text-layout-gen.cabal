@@ -5,7 +5,7 @@ cabal-version: 1.12
 -- see: https://github.com/sol/hpack
 
 name:           safe-coloured-text-layout-gen
-version:        0.0.0.0
+version:        0.0.0.1
 description:    Generators for types in safe-coloured-text-layout
 homepage:       https://github.com/NorfairKing/safe-coloured-text#readme
 bug-reports:    https://github.com/NorfairKing/safe-coloured-text/issues
@@ -14,6 +14,14 @@ maintainer:     syd@cs-syd.eu
 copyright:      Copyright (c) 2021 Tom Sydney Kerckhove
 license:        MIT
 build-type:     Simple
+extra-source-files:
+    CHANGELOG.md
+    test_resources/background.dat
+    test_resources/bicolour-background.dat
+    test_resources/custom-column-separator.dat
+    test_resources/list.dat
+    test_resources/table-with-rows-of-unequal-length.dat
+    test_resources/two-columns.dat
 
 source-repository head
   type: git
@@ -38,6 +46,7 @@ test-suite safe-coloured-text-layout-gen-test
   main-is: Spec.hs
   other-modules:
       Text.Colour.Layout.GenSpec
+      Text.Colour.LayoutSpec
       Paths_safe_coloured_text_layout_gen
   hs-source-dirs:
       test
@@ -48,8 +57,8 @@ test-suite safe-coloured-text-layout-gen-test
       base >=4.7 && <5
     , genvalidity-sydtest
     , safe-coloured-text
-    , safe-coloured-text-gen
     , safe-coloured-text-layout
     , safe-coloured-text-layout-gen
     , sydtest
+    , text
   default-language: Haskell2010
