@@ -1,4 +1,4 @@
-resolver: lts-22.22
+resolver: lts-23.19
 packages:
 - safe-coloured-text
 - safe-coloured-text-gen
@@ -20,7 +20,7 @@ extra-deps:
   - sydtest-discover
 
 - github: NorfairKing/autodocodec
-  commit: 5f23727689555789389ae4fbf41f674d43325814
+  commit: 7439601de128dadf562430f4216cbdb28580ed20
   subdirs:
   - autodocodec
   - autodocodec-schema
