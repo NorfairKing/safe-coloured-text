@@ -32,8 +32,12 @@ tests:
     - -rtsopts
     - -with-rtsopts=-N
     dependencies:
+    - bytestring
     - genvalidity-sydtest
+    - path
+    - path-io
     - safe-coloured-text
     - safe-coloured-text-gen
+    - safe-coloured-text-parsing
     - sydtest
     - text
