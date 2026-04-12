@@ -55,8 +55,7 @@ spec = do
         ( renderChunksText
             With24BitColours
             ( renderTable $
-                ( table $ [[[chunk (T.pack (show (x + y)))] | x <- [0 :: Int .. 9]] | y <- [0 :: Int .. 9]]
-                )
+                (table $ [[[chunk (T.pack (show (x + y)))] | x <- [0 :: Int .. 9]] | y <- [0 :: Int .. 9]])
                   { tableColumnSeparator = "@"
                   }
             )
@@ -67,8 +66,7 @@ spec = do
         ( renderChunksText
             With24BitColours
             ( renderTable $
-                ( table $ [[[fore red $ chunk (T.pack (show (x ^ y)))] | x <- [0 :: Int .. 4]] | y <- [0 :: Int .. 4]]
-                )
+                (table $ [[[fore red $ chunk (T.pack (show (x ^ y)))] | x <- [0 :: Int .. 4]] | y <- [0 :: Int .. 4]])
                   { tableBackground = Just (SingleColour black)
                   }
             )
@@ -79,8 +77,7 @@ spec = do
         ( renderChunksText
             With24BitColours
             ( renderTable $
-                ( table $ [[[fore red $ chunk (T.pack (show (x ^ y)))] | x <- [0 :: Int .. 4]] | y <- [0 :: Int .. 4]]
-                )
+                (table $ [[[fore red $ chunk (T.pack (show (x ^ y)))] | x <- [0 :: Int .. 4]] | y <- [0 :: Int .. 4]])
                   { tableBackground = Just (Bicolour (Just black) (Just brightBlack))
                   }
             )
