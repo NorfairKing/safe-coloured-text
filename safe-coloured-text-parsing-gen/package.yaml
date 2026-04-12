@@ -1,0 +1,31 @@
+name: safe-coloured-text-parsing-gen
+version: 0.0.0.0
+
+dependencies:
+- base >= 4.7 && < 5
+
+library:
+  source-dirs: src
+  dependencies:
+  - genvalidity
+  - safe-coloured-text-gen
+  - safe-coloured-text-parsing
+
+tests:
+  safe-coloured-text-parsing-test:
+    main: Spec.hs
+    source-dirs: test
+    build-tools: sydtest-discover
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - genvalidity-sydtest
+    - genvalidity-text
+    - safe-coloured-text
+    - safe-coloured-text-gen
+    - safe-coloured-text-parsing
+    - safe-coloured-text-parsing-gen
+    - sydtest
+    - text

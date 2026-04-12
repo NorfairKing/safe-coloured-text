@@ -71,6 +71,10 @@ renderCSI =
 data SGR
   = Reset
   | SetItalic !Bool
+  | SetStrikethrough !Bool
+  | SetSwapForegroundBackground !Bool
+  | SetConcealed !Bool
+  | SetOverlined !Bool
   | SetUnderlining !Underlining
   | SetBlinking !Blinking
   | SetConsoleIntensity !ConsoleIntensity
@@ -95,6 +99,10 @@ sgrToCSIParams :: SGR -> [Word8]
 sgrToCSIParams = \case
   Reset -> [] -- [0] would be fine too
   SetItalic b -> [if b then 3 else 23]
+  SetStrikethrough b -> [if b then 9 else 29]
+  SetSwapForegroundBackground b -> [if b then 7 else 27]
+  SetConcealed b -> [if b then 8 else 28]
+  SetOverlined b -> [if b then 53 else 55]
   SetUnderlining u ->
     [ case u of
         SingleUnderline -> 4

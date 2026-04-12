@@ -1,6 +1,7 @@
-{ mkDerivation, base, genvalidity, genvalidity-bytestring
-, genvalidity-sydtest, genvalidity-text, lib, safe-coloured-text
-, sydtest, sydtest-discover, text
+{ mkDerivation, base, bytestring, genvalidity
+, genvalidity-bytestring, genvalidity-sydtest, genvalidity-text
+, lib, path, path-io, safe-coloured-text
+, safe-coloured-text-parsing, sydtest, sydtest-discover, text
 }:
 mkDerivation {
   pname = "safe-coloured-text-gen";
@@ -11,7 +12,8 @@ mkDerivation {
     safe-coloured-text
   ];
   testHaskellDepends = [
-    base genvalidity-sydtest safe-coloured-text sydtest text
+    base bytestring genvalidity-sydtest path path-io safe-coloured-text
+    safe-coloured-text-parsing sydtest text
   ];
   testToolDepends = [ sydtest-discover ];
   homepage = "https://github.com/NorfairKing/safe-coloured-text#readme";

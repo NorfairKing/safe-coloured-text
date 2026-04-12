@@ -11,6 +11,8 @@ let
       "safe-coloured-text-gen"
       "safe-coloured-text-layout"
       "safe-coloured-text-layout-gen"
+      "safe-coloured-text-parsing"
+      "safe-coloured-text-parsing-gen"
       "safe-coloured-text-terminfo"
 
     ]
