@@ -150,13 +150,10 @@ spec = do
   describe "roundtrip" $ do
     it "recovers chunk style from rendered output for non-empty chunks" $
       forAllValid $ \c ->
-        -- Ensure non-empty text so we always get a chunk back
         let c' = c {chunkText = if Text.null (chunkText c) then "x" else chunkText c}
-            -- Strip blinking since chunkSGR doesn't render it
-            expected = c' {chunkBlinking = Nothing}
             rendered = renderChunkText With24BitColours c'
             (_, parsed) = parseAnsiChunks (chunk "") rendered
-         in parsed `shouldBe` [expected]
+         in parsed `shouldBe` [c']
 
 -- | Strip all ANSI CSI sequences from text.
 stripAnsi :: Text.Text -> Text.Text

@@ -40,13 +40,18 @@ spec = do
                   pure $ Colour8 intensity terminalColour
             let mColour = Nothing : map Just colour
             chunkItalic <- Nothing : map Just [minBound .. maxBound]
+            chunkStrikethrough <- Nothing : map Just [minBound .. maxBound]
+            chunkSwapForegroundBackground <- Nothing : map Just [minBound .. maxBound]
+            chunkConcealed <- Nothing : map Just [minBound .. maxBound]
+            chunkOverlined <- Nothing : map Just [minBound .. maxBound]
             chunkConsoleIntensity <- Nothing : map Just [minBound .. maxBound]
             chunkUnderlining <- Nothing : map Just [minBound .. maxBound]
             chunkBlinking <- Nothing : map Just [minBound .. maxBound]
             chunkForeground <- mColour
             chunkBackground <- mColour
             let chunkText = T.pack string
-            let italicName i = if i then "non-italic" else "italic"
+            let boolName label b = if b then label else "non-" <> label
+                boolPath label b = if b then label else "no-" <> label
                 consoleIntensityName :: ConsoleIntensity -> String
                 consoleIntensityName = \case
                   BoldIntensity -> "bold"
@@ -61,12 +66,16 @@ spec = do
                 blinkingName = \case
                   SlowBlinking -> "slow blinking"
                   RapidBlinking -> "rapid blinking"
-                  NoBlinking -> "no underline"
+                  NoBlinking -> "no blinking"
                 name =
                   unwords $
                     filter
                       (not . null)
-                      [ maybe "" italicName chunkItalic,
+                      [ maybe "" (boolName "italic") chunkItalic,
+                        maybe "" (boolName "strikethrough") chunkStrikethrough,
+                        maybe "" (boolName "reverse") chunkSwapForegroundBackground,
+                        maybe "" (boolName "concealed") chunkConcealed,
+                        maybe "" (boolName "overlined") chunkOverlined,
                         maybe "" consoleIntensityName chunkConsoleIntensity,
                         maybe "" underliningName chunkUnderlining,
                         maybe "" blinkingName chunkBlinking,
@@ -78,7 +87,6 @@ spec = do
                         "background"
                       ]
 
-                italicPath i = if i then "non-italic" else "italic"
                 consoleIntensityPath :: ConsoleIntensity -> FilePath
                 consoleIntensityPath = \case
                   BoldIntensity -> "bold"
@@ -93,13 +101,17 @@ spec = do
                 blinkingPath = \case
                   SlowBlinking -> "slow-blinking"
                   RapidBlinking -> "rapid-blinking"
-                  NoBlinking -> "no-underline"
+                  NoBlinking -> "no-blinking"
                 path =
                   intercalate
                     "-"
                     ( filter
                         (not . null)
-                        [ maybe "" italicPath chunkItalic,
+                        [ maybe "" (boolPath "it") chunkItalic,
+                          maybe "" (boolPath "st") chunkStrikethrough,
+                          maybe "" (boolPath "rv") chunkSwapForegroundBackground,
+                          maybe "" (boolPath "hd") chunkConcealed,
+                          maybe "" (boolPath "ol") chunkOverlined,
                           maybe "" consoleIntensityPath chunkConsoleIntensity,
                           maybe "" underliningPath chunkUnderlining,
                           maybe "" blinkingPath chunkBlinking,
@@ -121,6 +133,10 @@ spec = do
             let colour = Colour8Bit <$> [minBound .. maxBound]
             let mColour = Nothing : map Just colour
             let chunkItalic = Nothing
+            let chunkStrikethrough = Nothing
+            let chunkSwapForegroundBackground = Nothing
+            let chunkConcealed = Nothing
+            let chunkOverlined = Nothing
             let chunkConsoleIntensity = Nothing
             let chunkUnderlining = Nothing
             let chunkBlinking = Nothing
@@ -159,6 +175,10 @@ spec = do
                   pure $ Colour24Bit r g b
             let mColour = Nothing : map Just colour
             let chunkItalic = Nothing
+            let chunkStrikethrough = Nothing
+            let chunkSwapForegroundBackground = Nothing
+            let chunkConcealed = Nothing
+            let chunkOverlined = Nothing
             let chunkConsoleIntensity = Nothing
             let chunkUnderlining = Nothing
             let chunkBlinking = Nothing

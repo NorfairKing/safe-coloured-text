@@ -25,6 +25,10 @@ import Text.Colour.Code
 data Chunk = Chunk
   { chunkText :: !Text,
     chunkItalic :: !(Maybe Bool),
+    chunkStrikethrough :: !(Maybe Bool),
+    chunkSwapForegroundBackground :: !(Maybe Bool),
+    chunkConcealed :: !(Maybe Bool),
+    chunkOverlined :: !(Maybe Bool),
     chunkConsoleIntensity :: !(Maybe ConsoleIntensity),
     chunkUnderlining :: !(Maybe Underlining),
     chunkBlinking :: !(Maybe Blinking),
@@ -46,9 +50,13 @@ chunkWidth = T.length . chunkText
 
 plainChunk :: TerminalCapabilities -> Chunk -> Bool
 plainChunk tc Chunk {..} =
-  let Chunk _ _ _ _ _ _ _ = undefined
+  let Chunk _ _ _ _ _ _ _ _ _ _ _ = undefined
    in and
         [ isNothing chunkItalic,
+          isNothing chunkStrikethrough,
+          isNothing chunkSwapForegroundBackground,
+          isNothing chunkConcealed,
+          isNothing chunkOverlined,
           isNothing chunkConsoleIntensity,
           isNothing chunkUnderlining,
           isNothing chunkBlinking,
@@ -114,7 +122,12 @@ chunkSGR :: TerminalCapabilities -> Chunk -> [SGR]
 chunkSGR tc Chunk {..} =
   catMaybes
     [ SetItalic <$> chunkItalic,
+      SetStrikethrough <$> chunkStrikethrough,
+      SetSwapForegroundBackground <$> chunkSwapForegroundBackground,
+      SetConcealed <$> chunkConcealed,
+      SetOverlined <$> chunkOverlined,
       SetUnderlining <$> chunkUnderlining,
+      SetBlinking <$> chunkBlinking,
       SetConsoleIntensity <$> chunkConsoleIntensity,
       chunkForeground >>= colourSGR tc Foreground,
       chunkBackground >>= colourSGR tc Background
@@ -126,6 +139,10 @@ chunk t =
   Chunk
     { chunkText = t,
       chunkItalic = Nothing,
+      chunkStrikethrough = Nothing,
+      chunkSwapForegroundBackground = Nothing,
+      chunkConcealed = Nothing,
+      chunkOverlined = Nothing,
       chunkConsoleIntensity = Nothing,
       chunkUnderlining = Nothing,
       chunkBlinking = Nothing,
@@ -147,6 +164,18 @@ faint chu = chu {chunkConsoleIntensity = Just FaintIntensity}
 
 italic :: Chunk -> Chunk
 italic chu = chu {chunkItalic = Just True}
+
+strikethrough :: Chunk -> Chunk
+strikethrough chu = chu {chunkStrikethrough = Just True}
+
+swapForegroundBackground :: Chunk -> Chunk
+swapForegroundBackground chu = chu {chunkSwapForegroundBackground = Just True}
+
+concealed :: Chunk -> Chunk
+concealed chu = chu {chunkConcealed = Just True}
+
+overlined :: Chunk -> Chunk
+overlined chu = chu {chunkOverlined = Just True}
 
 underline :: Chunk -> Chunk
 underline chu = chu {chunkUnderlining = Just SingleUnderline}
