@@ -1,5 +1,15 @@
 # Changelog for safe-coloured-text
 
+## [0.5.0.0] - 2026-04-12
+
+### Changed
+
+* Separated styling from text: `Chunk` now has `chunkText` and `chunkStyle` fields
+* New `ChunkStyle` type holds all styling attributes (italic, bold, colours, etc.)
+* Styling field names now use `chunkStyle` prefix (e.g. `chunkStyleItalic`)
+* Added `noStyle` constructor and `plainStyle`, `styleSGR` functions
+* Renamed `chunkSGR` to `styleSGR`
+
 ## [0.4.0.0] - 2026-04-12
 
 ### Added

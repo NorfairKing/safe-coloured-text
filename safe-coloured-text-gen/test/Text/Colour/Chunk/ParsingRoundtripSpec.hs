@@ -6,7 +6,6 @@ module Text.Colour.Chunk.ParsingRoundtripSpec (spec) where
 import Control.Monad
 import qualified Data.ByteString as SB
 import Data.List (sort)
-import qualified Data.Text as Text
 import qualified Data.Text.Encoding as TE
 import Path
 import Path.IO (listDirRecurRel, resolveDir')
@@ -27,6 +26,6 @@ spec = do
         content <- case TE.decodeUtf8' bs of
           Left err -> expectationFailure $ "Invalid UTF-8: " ++ show err
           Right t -> pure t
-        let (_, parsed) = parseAnsiChunks (chunk Text.empty) content
+        let (_, parsed) = parseAnsiChunks noStyle content
             reRendered = renderChunksText With24BitColours parsed
         reRendered `shouldBe` content

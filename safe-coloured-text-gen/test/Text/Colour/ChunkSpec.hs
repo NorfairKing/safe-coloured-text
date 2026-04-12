@@ -39,17 +39,18 @@ spec = do
                   intensity <- [minBound .. maxBound]
                   pure $ Colour8 intensity terminalColour
             let mColour = Nothing : map Just colour
-            chunkItalic <- Nothing : map Just [minBound .. maxBound]
-            chunkStrikethrough <- Nothing : map Just [minBound .. maxBound]
-            chunkSwapForegroundBackground <- Nothing : map Just [minBound .. maxBound]
-            chunkConcealed <- Nothing : map Just [minBound .. maxBound]
-            chunkOverlined <- Nothing : map Just [minBound .. maxBound]
-            chunkConsoleIntensity <- Nothing : map Just [minBound .. maxBound]
-            chunkUnderlining <- Nothing : map Just [minBound .. maxBound]
-            chunkBlinking <- Nothing : map Just [minBound .. maxBound]
-            chunkForeground <- mColour
-            chunkBackground <- mColour
+            chunkStyleItalic <- Nothing : map Just [minBound .. maxBound]
+            chunkStyleStrikethrough <- Nothing : map Just [minBound .. maxBound]
+            chunkStyleSwapForegroundBackground <- Nothing : map Just [minBound .. maxBound]
+            chunkStyleConcealed <- Nothing : map Just [minBound .. maxBound]
+            chunkStyleOverlined <- Nothing : map Just [minBound .. maxBound]
+            chunkStyleConsoleIntensity <- Nothing : map Just [minBound .. maxBound]
+            chunkStyleUnderlining <- Nothing : map Just [minBound .. maxBound]
+            chunkStyleBlinking <- Nothing : map Just [minBound .. maxBound]
+            chunkStyleForeground <- mColour
+            chunkStyleBackground <- mColour
             let chunkText = T.pack string
+                chunkStyle = ChunkStyle {..}
             let boolName label b = if b then label else "non-" <> label
                 boolPath label b = if b then label else "no-" <> label
                 consoleIntensityName :: ConsoleIntensity -> String
@@ -71,19 +72,19 @@ spec = do
                   unwords $
                     filter
                       (not . null)
-                      [ maybe "" (boolName "italic") chunkItalic,
-                        maybe "" (boolName "strikethrough") chunkStrikethrough,
-                        maybe "" (boolName "reverse") chunkSwapForegroundBackground,
-                        maybe "" (boolName "concealed") chunkConcealed,
-                        maybe "" (boolName "overlined") chunkOverlined,
-                        maybe "" consoleIntensityName chunkConsoleIntensity,
-                        maybe "" underliningName chunkUnderlining,
-                        maybe "" blinkingName chunkBlinking,
+                      [ maybe "" (boolName "italic") chunkStyleItalic,
+                        maybe "" (boolName "strikethrough") chunkStyleStrikethrough,
+                        maybe "" (boolName "reverse") chunkStyleSwapForegroundBackground,
+                        maybe "" (boolName "concealed") chunkStyleConcealed,
+                        maybe "" (boolName "overlined") chunkStyleOverlined,
+                        maybe "" consoleIntensityName chunkStyleConsoleIntensity,
+                        maybe "" underliningName chunkStyleUnderlining,
+                        maybe "" blinkingName chunkStyleBlinking,
                         string,
                         "with",
-                        mColourName chunkForeground,
+                        mColourName chunkStyleForeground,
                         "foreground on",
-                        mColourName chunkBackground,
+                        mColourName chunkStyleBackground,
                         "background"
                       ]
 
@@ -107,17 +108,17 @@ spec = do
                     "-"
                     ( filter
                         (not . null)
-                        [ maybe "" (boolPath "it") chunkItalic,
-                          maybe "" (boolPath "st") chunkStrikethrough,
-                          maybe "" (boolPath "rv") chunkSwapForegroundBackground,
-                          maybe "" (boolPath "hd") chunkConcealed,
-                          maybe "" (boolPath "ol") chunkOverlined,
-                          maybe "" consoleIntensityPath chunkConsoleIntensity,
-                          maybe "" underliningPath chunkUnderlining,
-                          maybe "" blinkingPath chunkBlinking,
-                          mColourPath chunkForeground,
+                        [ maybe "" (boolPath "it") chunkStyleItalic,
+                          maybe "" (boolPath "st") chunkStyleStrikethrough,
+                          maybe "" (boolPath "rv") chunkStyleSwapForegroundBackground,
+                          maybe "" (boolPath "hd") chunkStyleConcealed,
+                          maybe "" (boolPath "ol") chunkStyleOverlined,
+                          maybe "" consoleIntensityPath chunkStyleConsoleIntensity,
+                          maybe "" underliningPath chunkStyleUnderlining,
+                          maybe "" blinkingPath chunkStyleBlinking,
+                          mColourPath chunkStyleForeground,
                           "fg",
-                          mColourPath chunkBackground,
+                          mColourPath chunkStyleBackground,
                           "bg"
                         ]
                     )
@@ -132,30 +133,31 @@ spec = do
       let chunks string = justAFew $ do
             let colour = Colour8Bit <$> [minBound .. maxBound]
             let mColour = Nothing : map Just colour
-            let chunkItalic = Nothing
-            let chunkStrikethrough = Nothing
-            let chunkSwapForegroundBackground = Nothing
-            let chunkConcealed = Nothing
-            let chunkOverlined = Nothing
-            let chunkConsoleIntensity = Nothing
-            let chunkUnderlining = Nothing
-            let chunkBlinking = Nothing
-            chunkForeground <- mColour
-            chunkBackground <- mColour
+            let chunkStyleItalic = Nothing
+            let chunkStyleStrikethrough = Nothing
+            let chunkStyleSwapForegroundBackground = Nothing
+            let chunkStyleConcealed = Nothing
+            let chunkStyleOverlined = Nothing
+            let chunkStyleConsoleIntensity = Nothing
+            let chunkStyleUnderlining = Nothing
+            let chunkStyleBlinking = Nothing
+            chunkStyleForeground <- mColour
+            chunkStyleBackground <- mColour
             let chunkText = T.pack string
+                chunkStyle = ChunkStyle {..}
             let name =
                   unwords
-                    [ mColourName chunkForeground,
+                    [ mColourName chunkStyleForeground,
                       "foreground on",
-                      mColourName chunkBackground,
+                      mColourName chunkStyleBackground,
                       "background"
                     ]
                 path =
                   intercalate
                     "-"
-                    [ mColourPath chunkForeground,
+                    [ mColourPath chunkStyleForeground,
                       "fg",
-                      mColourPath chunkBackground,
+                      mColourPath chunkStyleBackground,
                       "bg"
                     ]
                     <> ".dat"
@@ -174,30 +176,31 @@ spec = do
                   b <- w
                   pure $ Colour24Bit r g b
             let mColour = Nothing : map Just colour
-            let chunkItalic = Nothing
-            let chunkStrikethrough = Nothing
-            let chunkSwapForegroundBackground = Nothing
-            let chunkConcealed = Nothing
-            let chunkOverlined = Nothing
-            let chunkConsoleIntensity = Nothing
-            let chunkUnderlining = Nothing
-            let chunkBlinking = Nothing
-            chunkForeground <- mColour
-            chunkBackground <- mColour
+            let chunkStyleItalic = Nothing
+            let chunkStyleStrikethrough = Nothing
+            let chunkStyleSwapForegroundBackground = Nothing
+            let chunkStyleConcealed = Nothing
+            let chunkStyleOverlined = Nothing
+            let chunkStyleConsoleIntensity = Nothing
+            let chunkStyleUnderlining = Nothing
+            let chunkStyleBlinking = Nothing
+            chunkStyleForeground <- mColour
+            chunkStyleBackground <- mColour
             let chunkText = T.pack string
+                chunkStyle = ChunkStyle {..}
             let name =
                   unwords
-                    [ mColourName chunkForeground,
+                    [ mColourName chunkStyleForeground,
                       "foreground on",
-                      mColourName chunkBackground,
+                      mColourName chunkStyleBackground,
                       "background"
                     ]
                 path =
                   intercalate
                     "-"
-                    [ mColourPath chunkForeground,
+                    [ mColourPath chunkStyleForeground,
                       "fg",
-                      mColourPath chunkBackground,
+                      mColourPath chunkStyleBackground,
                       "bg"
                     ]
                     <> ".dat"

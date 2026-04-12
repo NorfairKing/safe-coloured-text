@@ -65,7 +65,7 @@ data AnsiToken
     SgrSequence ![Word8]
   | -- | A non-SGR CSI sequence (to be discarded)
     OtherCsiSequence
-  | -- | A carriage return (@\\r@)
+  | -- | A carriage return (@\r@)
     CarriageReturn
   deriving (Show, Eq, Generic)
 
@@ -156,108 +156,104 @@ csiParamsP = do
 -- The output list is produced lazily: each 'Chunk' is yielded as soon as
 -- the corresponding 'PlainText' token is encountered.  The final style
 -- state is only available after the entire input has been consumed.
-tokensToChunks :: Chunk -> [AnsiToken] -> (Chunk, [Chunk])
+tokensToChunks :: ChunkStyle -> [AnsiToken] -> (ChunkStyle, [Chunk])
 tokensToChunks style tokens =
   let (finalStyle, chunks) = go style tokens
    in (finalStyle, chunks)
   where
-    go :: Chunk -> [AnsiToken] -> (Chunk, [Chunk])
+    go :: ChunkStyle -> [AnsiToken] -> (ChunkStyle, [Chunk])
     go s [] = (s, [])
     go s (token : rest) = case token of
       PlainText t
         | Text.null t -> go s rest
         | otherwise ->
             let (finalS, restChunks) = go s rest
-             in (finalS, s {chunkText = t} : restChunks)
+             in (finalS, Chunk {chunkText = t, chunkStyle = s} : restChunks)
       SgrSequence params -> go (applySGRParams s params) rest
       OtherCsiSequence -> go s rest
       CarriageReturn ->
-        -- In a terminal, \r moves the cursor to column 0.
-        -- If followed by plain text, treat it as a line break
-        -- (progress update). Otherwise discard it (terminal noise).
         case rest of
           (PlainText _ : _) ->
             let (finalS, restChunks) = go s rest
-             in (finalS, s {chunkText = "\n"} : restChunks)
+             in (finalS, Chunk {chunkText = "\n", chunkStyle = s} : restChunks)
           _ -> go s rest
 
 -- | Parse strict 'Text' containing ANSI escape codes into styled 'Chunk's.
 --
--- The first argument is the current style state (a 'Chunk' with empty text
--- whose style fields carry over). The returned 'Chunk' is the style state
--- after processing all escape codes, suitable for threading to the next line.
-parseAnsiChunks :: Chunk -> Text -> (Chunk, [Chunk])
+-- The first argument is the current style state. The returned 'ChunkStyle'
+-- is the style state after processing all escape codes, suitable for
+-- threading to the next line.
+parseAnsiChunks :: ChunkStyle -> Text -> (ChunkStyle, [Chunk])
 parseAnsiChunks style = tokensToChunks style . parseAnsiTokens
 
 -- | Parse lazy 'Lazy.Text' containing ANSI escape codes into styled 'Chunk's.
 --
 -- Both the token stream and the chunk list are produced lazily.
-parseAnsiChunksLazy :: Chunk -> Lazy.Text -> (Chunk, [Chunk])
+parseAnsiChunksLazy :: ChunkStyle -> Lazy.Text -> (ChunkStyle, [Chunk])
 parseAnsiChunksLazy style = tokensToChunks style . parseAnsiTokensLazy
 
--- | Apply a list of SGR parameter bytes to a style 'Chunk'.
+-- | Apply a list of SGR parameter bytes to a 'ChunkStyle'.
 -- An empty parameter list is equivalent to reset (SGR 0).
-applySGRParams :: Chunk -> [Word8] -> Chunk
-applySGRParams style [] = applyReset style
+applySGRParams :: ChunkStyle -> [Word8] -> ChunkStyle
+applySGRParams _ [] = noStyle
 applySGRParams style params = goSGR style params
 
-goSGR :: Chunk -> [Word8] -> Chunk
+goSGR :: ChunkStyle -> [Word8] -> ChunkStyle
 goSGR s [] = s
 goSGR s (p : ps)
-  | p == 0 = goSGR (applyReset s) ps
-  | p == 1 = goSGR (s {chunkConsoleIntensity = Just BoldIntensity}) ps
-  | p == 2 = goSGR (s {chunkConsoleIntensity = Just FaintIntensity}) ps
-  | p == 3 = goSGR (s {chunkItalic = Just True}) ps
-  | p == 4 = goSGR (s {chunkUnderlining = Just SingleUnderline}) ps
-  | p == 5 = goSGR (s {chunkBlinking = Just SlowBlinking}) ps
-  | p == 6 = goSGR (s {chunkBlinking = Just RapidBlinking}) ps
-  | p == 7 = goSGR (s {chunkSwapForegroundBackground = Just True}) ps
-  | p == 8 = goSGR (s {chunkConcealed = Just True}) ps
-  | p == 9 = goSGR (s {chunkStrikethrough = Just True}) ps
-  | p == 21 = goSGR (s {chunkUnderlining = Just DoubleUnderline}) ps
-  | p == 22 = goSGR (s {chunkConsoleIntensity = Just NormalIntensity}) ps
-  | p == 23 = goSGR (s {chunkItalic = Just False}) ps
-  | p == 24 = goSGR (s {chunkUnderlining = Just NoUnderline}) ps
-  | p == 25 = goSGR (s {chunkBlinking = Just NoBlinking}) ps
-  | p == 27 = goSGR (s {chunkSwapForegroundBackground = Just False}) ps
-  | p == 28 = goSGR (s {chunkConcealed = Just False}) ps
-  | p == 29 = goSGR (s {chunkStrikethrough = Just False}) ps
+  | p == 0 = goSGR noStyle ps
+  | p == 1 = goSGR (s {chunkStyleConsoleIntensity = Just BoldIntensity}) ps
+  | p == 2 = goSGR (s {chunkStyleConsoleIntensity = Just FaintIntensity}) ps
+  | p == 3 = goSGR (s {chunkStyleItalic = Just True}) ps
+  | p == 4 = goSGR (s {chunkStyleUnderlining = Just SingleUnderline}) ps
+  | p == 5 = goSGR (s {chunkStyleBlinking = Just SlowBlinking}) ps
+  | p == 6 = goSGR (s {chunkStyleBlinking = Just RapidBlinking}) ps
+  | p == 7 = goSGR (s {chunkStyleSwapForegroundBackground = Just True}) ps
+  | p == 8 = goSGR (s {chunkStyleConcealed = Just True}) ps
+  | p == 9 = goSGR (s {chunkStyleStrikethrough = Just True}) ps
+  | p == 21 = goSGR (s {chunkStyleUnderlining = Just DoubleUnderline}) ps
+  | p == 22 = goSGR (s {chunkStyleConsoleIntensity = Just NormalIntensity}) ps
+  | p == 23 = goSGR (s {chunkStyleItalic = Just False}) ps
+  | p == 24 = goSGR (s {chunkStyleUnderlining = Just NoUnderline}) ps
+  | p == 25 = goSGR (s {chunkStyleBlinking = Just NoBlinking}) ps
+  | p == 27 = goSGR (s {chunkStyleSwapForegroundBackground = Just False}) ps
+  | p == 28 = goSGR (s {chunkStyleConcealed = Just False}) ps
+  | p == 29 = goSGR (s {chunkStyleStrikethrough = Just False}) ps
+  -- Standard foreground colours (30-37)
   | p >= 30 && p <= 37 =
       case terminalColourFromIndex (p - 30) of
-        Just tc -> goSGR (s {chunkForeground = Just (Colour8 Dull tc)}) ps
+        Just tc -> goSGR (s {chunkStyleForeground = Just (Colour8 Dull tc)}) ps
         Nothing -> goSGR s ps
   -- Extended foreground colour
   | p == 38 = case ps of
-      5 : n : rest -> goSGR (s {chunkForeground = Just (Colour8Bit n)}) rest
-      2 : r : g : b : rest -> goSGR (s {chunkForeground = Just (Colour24Bit r g b)}) rest
+      5 : n : rest -> goSGR (s {chunkStyleForeground = Just (Colour8Bit n)}) rest
+      2 : r : g : b : rest -> goSGR (s {chunkStyleForeground = Just (Colour24Bit r g b)}) rest
       _ -> goSGR s ps
   -- Default foreground
-  | p == 39 = goSGR (s {chunkForeground = Nothing}) ps
+  | p == 39 = goSGR (s {chunkStyleForeground = Nothing}) ps
   -- Standard background colours (40-47)
   | p >= 40 && p <= 47 =
       case terminalColourFromIndex (p - 40) of
-        Just tc -> goSGR (s {chunkBackground = Just (Colour8 Dull tc)}) ps
+        Just tc -> goSGR (s {chunkStyleBackground = Just (Colour8 Dull tc)}) ps
         Nothing -> goSGR s ps
   -- Extended background colour
   | p == 48 = case ps of
-      5 : n : rest -> goSGR (s {chunkBackground = Just (Colour8Bit n)}) rest
-      2 : r : g : b : rest -> goSGR (s {chunkBackground = Just (Colour24Bit r g b)}) rest
+      5 : n : rest -> goSGR (s {chunkStyleBackground = Just (Colour8Bit n)}) rest
+      2 : r : g : b : rest -> goSGR (s {chunkStyleBackground = Just (Colour24Bit r g b)}) rest
       _ -> goSGR s ps
   -- Default background
-  | p == 49 = goSGR (s {chunkBackground = Nothing}) ps
-  | p == 53 = goSGR (s {chunkOverlined = Just True}) ps
-  | p == 55 = goSGR (s {chunkOverlined = Just False}) ps
+  | p == 49 = goSGR (s {chunkStyleBackground = Nothing}) ps
+  | p == 53 = goSGR (s {chunkStyleOverlined = Just True}) ps
+  | p == 55 = goSGR (s {chunkStyleOverlined = Just False}) ps
+  -- Bright foreground colours (90-97)
   | p >= 90 && p <= 97 =
       case terminalColourFromIndex (p - 90) of
-        Just tc -> goSGR (s {chunkForeground = Just (Colour8 Bright tc)}) ps
+        Just tc -> goSGR (s {chunkStyleForeground = Just (Colour8 Bright tc)}) ps
         Nothing -> goSGR s ps
   -- Bright background colours (100-107)
   | p >= 100 && p <= 107 =
       case terminalColourFromIndex (p - 100) of
-        Just tc -> goSGR (s {chunkBackground = Just (Colour8 Bright tc)}) ps
+        Just tc -> goSGR (s {chunkStyleBackground = Just (Colour8 Bright tc)}) ps
         Nothing -> goSGR s ps
   -- Unknown code, skip
   | otherwise = goSGR s ps
-
-applyReset :: Chunk -> Chunk
-applyReset _ = chunk ""

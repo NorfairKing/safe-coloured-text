@@ -9,6 +9,8 @@ module Text.Colour
   ( -- * Building chunks
     chunk,
     Chunk (..),
+    ChunkStyle (..),
+    noStyle,
 
     -- ** Styling
 

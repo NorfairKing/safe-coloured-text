@@ -125,7 +125,9 @@ paddingChunk :: Int -> Char -> Chunk
 paddingChunk l c = chunk $ T.pack $ replicate l c
 
 possiblyAddBackground :: Maybe Colour -> Chunk -> Chunk
-possiblyAddBackground mb c = c {chunkBackground = chunkBackground c <|> mb}
+possiblyAddBackground mb c =
+  let s = chunkStyle c
+   in c {chunkStyle = s {chunkStyleBackground = chunkStyleBackground s <|> mb}}
 
 backgroundForRow :: Int -> Maybe TableBackground -> Maybe Colour
 backgroundForRow _ Nothing = Nothing

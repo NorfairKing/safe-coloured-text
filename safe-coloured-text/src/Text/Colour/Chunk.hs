@@ -24,16 +24,7 @@ import Text.Colour.Code
 
 data Chunk = Chunk
   { chunkText :: !Text,
-    chunkItalic :: !(Maybe Bool),
-    chunkStrikethrough :: !(Maybe Bool),
-    chunkSwapForegroundBackground :: !(Maybe Bool),
-    chunkConcealed :: !(Maybe Bool),
-    chunkOverlined :: !(Maybe Bool),
-    chunkConsoleIntensity :: !(Maybe ConsoleIntensity),
-    chunkUnderlining :: !(Maybe Underlining),
-    chunkBlinking :: !(Maybe Blinking),
-    chunkForeground :: !(Maybe Colour),
-    chunkBackground :: !(Maybe Colour)
+    chunkStyle :: !ChunkStyle
   }
   deriving (Show, Eq, Generic)
 
@@ -42,27 +33,48 @@ instance Validity Chunk
 instance IsString Chunk where
   fromString = chunk . fromString
 
+data ChunkStyle = ChunkStyle
+  { chunkStyleItalic :: !(Maybe Bool),
+    chunkStyleStrikethrough :: !(Maybe Bool),
+    chunkStyleSwapForegroundBackground :: !(Maybe Bool),
+    chunkStyleConcealed :: !(Maybe Bool),
+    chunkStyleOverlined :: !(Maybe Bool),
+    chunkStyleConsoleIntensity :: !(Maybe ConsoleIntensity),
+    chunkStyleUnderlining :: !(Maybe Underlining),
+    chunkStyleBlinking :: !(Maybe Blinking),
+    chunkStyleForeground :: !(Maybe Colour),
+    chunkStyleBackground :: !(Maybe Colour)
+  }
+  deriving (Show, Eq, Generic)
+
+instance Validity ChunkStyle
+
 -- TODO This is not correct because text-width is correct but it's a
 -- good place to put this so we can fix it later and it'll get fixed
 -- everywhere.
 chunkWidth :: Chunk -> Int
 chunkWidth = T.length . chunkText
 
+plainStyle :: TerminalCapabilities -> ChunkStyle -> Bool
+plainStyle tc ChunkStyle {..} =
+  let ChunkStyle _ _ _ _ _ _ _ _ _ _ = undefined
+   in and
+        [ isNothing chunkStyleItalic,
+          isNothing chunkStyleStrikethrough,
+          isNothing chunkStyleSwapForegroundBackground,
+          isNothing chunkStyleConcealed,
+          isNothing chunkStyleOverlined,
+          isNothing chunkStyleConsoleIntensity,
+          isNothing chunkStyleUnderlining,
+          isNothing chunkStyleBlinking,
+          maybe True (plainColour tc) chunkStyleForeground,
+          maybe True (plainColour tc) chunkStyleBackground
+        ]
+
 plainChunk :: TerminalCapabilities -> Chunk -> Bool
 plainChunk tc Chunk {..} =
-  let Chunk _ _ _ _ _ _ _ _ _ _ _ = undefined
-   in and
-        [ isNothing chunkItalic,
-          isNothing chunkStrikethrough,
-          isNothing chunkSwapForegroundBackground,
-          isNothing chunkConcealed,
-          isNothing chunkOverlined,
-          isNothing chunkConsoleIntensity,
-          isNothing chunkUnderlining,
-          isNothing chunkBlinking,
-          maybe True (plainColour tc) chunkForeground,
-          maybe True (plainColour tc) chunkBackground
-        ]
+  let Chunk _ _ = undefined
+   in plainStyle tc chunkStyle
 
 plainColour :: TerminalCapabilities -> Colour -> Bool
 plainColour tc = \case
@@ -113,24 +125,24 @@ renderChunkBuilder tc c@Chunk {..} =
     then LTB.fromText chunkText
     else
       mconcat
-        [ renderCSI (SGR (chunkSGR tc c)),
+        [ renderCSI (SGR (styleSGR tc chunkStyle)),
           LTB.fromText chunkText,
           renderCSI (SGR [Reset])
         ]
 
-chunkSGR :: TerminalCapabilities -> Chunk -> [SGR]
-chunkSGR tc Chunk {..} =
+styleSGR :: TerminalCapabilities -> ChunkStyle -> [SGR]
+styleSGR tc ChunkStyle {..} =
   catMaybes
-    [ SetItalic <$> chunkItalic,
-      SetStrikethrough <$> chunkStrikethrough,
-      SetSwapForegroundBackground <$> chunkSwapForegroundBackground,
-      SetConcealed <$> chunkConcealed,
-      SetOverlined <$> chunkOverlined,
-      SetUnderlining <$> chunkUnderlining,
-      SetBlinking <$> chunkBlinking,
-      SetConsoleIntensity <$> chunkConsoleIntensity,
-      chunkForeground >>= colourSGR tc Foreground,
-      chunkBackground >>= colourSGR tc Background
+    [ SetItalic <$> chunkStyleItalic,
+      SetStrikethrough <$> chunkStyleStrikethrough,
+      SetSwapForegroundBackground <$> chunkStyleSwapForegroundBackground,
+      SetConcealed <$> chunkStyleConcealed,
+      SetOverlined <$> chunkStyleOverlined,
+      SetUnderlining <$> chunkStyleUnderlining,
+      SetBlinking <$> chunkStyleBlinking,
+      SetConsoleIntensity <$> chunkStyleConsoleIntensity,
+      chunkStyleForeground >>= colourSGR tc Foreground,
+      chunkStyleBackground >>= colourSGR tc Background
     ]
 
 -- | Turn a text into a plain chunk, without any styling
@@ -138,62 +150,69 @@ chunk :: Text -> Chunk
 chunk t =
   Chunk
     { chunkText = t,
-      chunkItalic = Nothing,
-      chunkStrikethrough = Nothing,
-      chunkSwapForegroundBackground = Nothing,
-      chunkConcealed = Nothing,
-      chunkOverlined = Nothing,
-      chunkConsoleIntensity = Nothing,
-      chunkUnderlining = Nothing,
-      chunkBlinking = Nothing,
-      chunkForeground = Nothing,
-      chunkBackground = Nothing
+      chunkStyle = noStyle
+    }
+
+-- | The empty style, without any styling
+noStyle :: ChunkStyle
+noStyle =
+  ChunkStyle
+    { chunkStyleItalic = Nothing,
+      chunkStyleStrikethrough = Nothing,
+      chunkStyleSwapForegroundBackground = Nothing,
+      chunkStyleConcealed = Nothing,
+      chunkStyleOverlined = Nothing,
+      chunkStyleConsoleIntensity = Nothing,
+      chunkStyleUnderlining = Nothing,
+      chunkStyleBlinking = Nothing,
+      chunkStyleForeground = Nothing,
+      chunkStyleBackground = Nothing
     }
 
 fore :: Colour -> Chunk -> Chunk
-fore col chu = chu {chunkForeground = Just col}
+fore col chu = chu {chunkStyle = (chunkStyle chu) {chunkStyleForeground = Just col}}
 
 back :: Colour -> Chunk -> Chunk
-back col chu = chu {chunkBackground = Just col}
+back col chu = chu {chunkStyle = (chunkStyle chu) {chunkStyleBackground = Just col}}
 
 bold :: Chunk -> Chunk
-bold chu = chu {chunkConsoleIntensity = Just BoldIntensity}
+bold chu = chu {chunkStyle = (chunkStyle chu) {chunkStyleConsoleIntensity = Just BoldIntensity}}
 
 faint :: Chunk -> Chunk
-faint chu = chu {chunkConsoleIntensity = Just FaintIntensity}
+faint chu = chu {chunkStyle = (chunkStyle chu) {chunkStyleConsoleIntensity = Just FaintIntensity}}
 
 italic :: Chunk -> Chunk
-italic chu = chu {chunkItalic = Just True}
+italic chu = chu {chunkStyle = (chunkStyle chu) {chunkStyleItalic = Just True}}
 
 strikethrough :: Chunk -> Chunk
-strikethrough chu = chu {chunkStrikethrough = Just True}
+strikethrough chu = chu {chunkStyle = (chunkStyle chu) {chunkStyleStrikethrough = Just True}}
 
 swapForegroundBackground :: Chunk -> Chunk
-swapForegroundBackground chu = chu {chunkSwapForegroundBackground = Just True}
+swapForegroundBackground chu = chu {chunkStyle = (chunkStyle chu) {chunkStyleSwapForegroundBackground = Just True}}
 
 concealed :: Chunk -> Chunk
-concealed chu = chu {chunkConcealed = Just True}
+concealed chu = chu {chunkStyle = (chunkStyle chu) {chunkStyleConcealed = Just True}}
 
 overlined :: Chunk -> Chunk
-overlined chu = chu {chunkOverlined = Just True}
+overlined chu = chu {chunkStyle = (chunkStyle chu) {chunkStyleOverlined = Just True}}
 
 underline :: Chunk -> Chunk
-underline chu = chu {chunkUnderlining = Just SingleUnderline}
+underline chu = chu {chunkStyle = (chunkStyle chu) {chunkStyleUnderlining = Just SingleUnderline}}
 
 doubleUnderline :: Chunk -> Chunk
-doubleUnderline chu = chu {chunkUnderlining = Just DoubleUnderline}
+doubleUnderline chu = chu {chunkStyle = (chunkStyle chu) {chunkStyleUnderlining = Just DoubleUnderline}}
 
 noUnderline :: Chunk -> Chunk
-noUnderline chu = chu {chunkUnderlining = Just NoUnderline}
+noUnderline chu = chu {chunkStyle = (chunkStyle chu) {chunkStyleUnderlining = Just NoUnderline}}
 
 slowBlinking :: Chunk -> Chunk
-slowBlinking chu = chu {chunkBlinking = Just SlowBlinking}
+slowBlinking chu = chu {chunkStyle = (chunkStyle chu) {chunkStyleBlinking = Just SlowBlinking}}
 
 rapidBlinking :: Chunk -> Chunk
-rapidBlinking chu = chu {chunkBlinking = Just RapidBlinking}
+rapidBlinking chu = chu {chunkStyle = (chunkStyle chu) {chunkStyleBlinking = Just RapidBlinking}}
 
 noBlinking :: Chunk -> Chunk
-noBlinking chu = chu {chunkBlinking = Just NoBlinking}
+noBlinking chu = chu {chunkStyle = (chunkStyle chu) {chunkStyleBlinking = Just NoBlinking}}
 
 -- TODO consider allowing an 8-colour alternative to a given 256-colour
 data Colour

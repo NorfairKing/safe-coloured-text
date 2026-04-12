@@ -68,81 +68,81 @@ spec = do
 
   describe "parseAnsiChunks" $ do
     it "returns plain text unchanged" $
-      parseAnsiChunks (chunk "") "hello world"
-        `shouldBe` (chunk "", [chunk "hello world"])
+      parseAnsiChunks noStyle "hello world"
+        `shouldBe` (noStyle, [chunk "hello world"])
 
     it "parses a simple red foreground" $
-      parseAnsiChunks (chunk "") "\ESC[31mhello\ESC[0m world"
-        `shouldBe` ( chunk "",
+      parseAnsiChunks noStyle "\ESC[31mhello\ESC[0m world"
+        `shouldBe` ( noStyle,
                      [ fore (Colour8 Dull Red) (chunk "hello"),
                        chunk " world"
                      ]
                    )
 
     it "parses bold" $
-      parseAnsiChunks (chunk "") "\ESC[1mbold\ESC[0m"
-        `shouldBe` (chunk "", [bold (chunk "bold")])
+      parseAnsiChunks noStyle "\ESC[1mbold\ESC[0m"
+        `shouldBe` (noStyle, [bold (chunk "bold")])
 
     it "parses combined bold and colour" $
-      parseAnsiChunks (chunk "") "\ESC[1;31mred bold\ESC[0m"
-        `shouldBe` (chunk "", [fore (Colour8 Dull Red) (bold (chunk "red bold"))])
+      parseAnsiChunks noStyle "\ESC[1;31mred bold\ESC[0m"
+        `shouldBe` (noStyle, [fore (Colour8 Dull Red) (bold (chunk "red bold"))])
 
     it "parses bright colours" $
-      parseAnsiChunks (chunk "") "\ESC[91mbright red\ESC[0m"
-        `shouldBe` (chunk "", [fore (Colour8 Bright Red) (chunk "bright red")])
+      parseAnsiChunks noStyle "\ESC[91mbright red\ESC[0m"
+        `shouldBe` (noStyle, [fore (Colour8 Bright Red) (chunk "bright red")])
 
     it "parses 256-colour foreground" $
-      parseAnsiChunks (chunk "") "\ESC[38;5;196mcolour\ESC[0m"
-        `shouldBe` (chunk "", [fore (Colour8Bit 196) (chunk "colour")])
+      parseAnsiChunks noStyle "\ESC[38;5;196mcolour\ESC[0m"
+        `shouldBe` (noStyle, [fore (Colour8Bit 196) (chunk "colour")])
 
     it "parses 24-bit RGB foreground" $
-      parseAnsiChunks (chunk "") "\ESC[38;2;255;128;0mcolour\ESC[0m"
-        `shouldBe` (chunk "", [fore (Colour24Bit 255 128 0) (chunk "colour")])
+      parseAnsiChunks noStyle "\ESC[38;2;255;128;0mcolour\ESC[0m"
+        `shouldBe` (noStyle, [fore (Colour24Bit 255 128 0) (chunk "colour")])
 
     it "parses background colour" $
-      parseAnsiChunks (chunk "") "\ESC[42mgreen bg\ESC[0m"
-        `shouldBe` (chunk "", [back (Colour8 Dull Green) (chunk "green bg")])
+      parseAnsiChunks noStyle "\ESC[42mgreen bg\ESC[0m"
+        `shouldBe` (noStyle, [back (Colour8 Dull Green) (chunk "green bg")])
 
     it "strips non-SGR CSI sequences" $
-      parseAnsiChunks (chunk "") "before\ESC[2Jafter"
-        `shouldBe` (chunk "", [chunk "before", chunk "after"])
+      parseAnsiChunks noStyle "before\ESC[2Jafter"
+        `shouldBe` (noStyle, [chunk "before", chunk "after"])
 
     it "handles empty input" $
-      parseAnsiChunks (chunk "") ""
-        `shouldBe` (chunk "", [])
+      parseAnsiChunks noStyle ""
+        `shouldBe` (noStyle, [])
 
     it "handles text with no visible content between escapes" $
-      parseAnsiChunks (chunk "") "\ESC[31m\ESC[0m"
-        `shouldBe` (chunk "", [])
+      parseAnsiChunks noStyle "\ESC[31m\ESC[0m"
+        `shouldBe` (noStyle, [])
 
     it "threads state across calls" $
-      let (style1, chunks1) = parseAnsiChunks (chunk "") "\ESC[31mhello"
+      let (style1, chunks1) = parseAnsiChunks noStyle "\ESC[31mhello"
           result2 = parseAnsiChunks style1 "world\ESC[0m"
        in do
             chunks1 `shouldBe` [fore (Colour8 Dull Red) (chunk "hello")]
-            style1 `shouldBe` fore (Colour8 Dull Red) (chunk "")
-            result2 `shouldBe` (chunk "", [fore (Colour8 Dull Red) (chunk "world")])
+            style1 `shouldBe` noStyle {chunkStyleForeground = Just (Colour8 Dull Red)}
+            result2 `shouldBe` (noStyle, [fore (Colour8 Dull Red) (chunk "world")])
 
     it "handles incomplete sequence at end of text" $
-      parseAnsiChunks (chunk "") "hello\ESC["
-        `shouldBe` (chunk "", [chunk "hello", chunk "\ESC["])
+      parseAnsiChunks noStyle "hello\ESC["
+        `shouldBe` (noStyle, [chunk "hello", chunk "\ESC["])
 
     it "never crashes on arbitrary input" $
       forAllValid $ \text ->
-        let (_, chunks) = parseAnsiChunks (chunk "") text
+        let (_, chunks) = parseAnsiChunks noStyle text
          in seq (length chunks) (pure () :: IO ())
 
     it "produces segment texts that concatenate to the input minus ANSI codes" $
       forAllValid $ \text ->
-        let (_, chunks) = parseAnsiChunks (chunk "") text
+        let (_, chunks) = parseAnsiChunks noStyle text
             combined = Text.concat $ map chunkText chunks
          in combined `shouldBe` stripAnsi text
 
   describe "parseAnsiChunksLazy" $ do
     it "produces the same chunks as strict parsing" $
       forAllValid $ \text ->
-        let (styleS, chunksS) = parseAnsiChunks (chunk "") text
-            (styleL, chunksL) = parseAnsiChunksLazy (chunk "") (Lazy.fromStrict text)
+        let (styleS, chunksS) = parseAnsiChunks noStyle text
+            (styleL, chunksL) = parseAnsiChunksLazy noStyle (Lazy.fromStrict text)
          in do
               chunksL `shouldBe` chunksS
               styleL `shouldBe` styleS
@@ -152,7 +152,7 @@ spec = do
       forAllValid $ \c ->
         let c' = c {chunkText = if Text.null (chunkText c) then "x" else chunkText c}
             rendered = renderChunkText With24BitColours c'
-            (_, parsed) = parseAnsiChunks (chunk "") rendered
+            (_, parsed) = parseAnsiChunks noStyle rendered
          in parsed `shouldBe` [c']
 
 -- | Strip all ANSI CSI sequences from text.
