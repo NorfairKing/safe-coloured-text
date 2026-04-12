@@ -65,6 +65,8 @@ data AnsiToken
     SgrSequence ![Word8]
   | -- | A non-SGR CSI sequence (to be discarded)
     OtherCsiSequence
+  | -- | A carriage return (@\\r@)
+    CarriageReturn
   deriving (Show, Eq, Generic)
 
 instance Validity AnsiToken
@@ -92,12 +94,18 @@ parseAnsiTokensLazy = go
               -- non-empty input (incompleteEscapeP and plainTextP are catch-alls).
               [PlainText (Lazy.toStrict remaining)]
 
--- | Parse a single ANSI token: a CSI sequence, a bare ESC, or plain text.
+-- | Parse a single ANSI token: a CSI sequence, a bare ESC, a carriage
+-- return, or plain text.
 ansiTokenP :: Parser AnsiToken
-ansiTokenP = csiSequenceP <|> incompleteEscapeP <|> plainTextP
+ansiTokenP = csiSequenceP <|> incompleteEscapeP <|> carriageReturnP <|> plainTextP
 
 plainTextP :: Parser AnsiToken
-plainTextP = PlainText <$> takeWhile1 (/= '\ESC')
+plainTextP = PlainText <$> takeWhile1 (\c -> c /= '\ESC' && c /= '\r')
+
+carriageReturnP :: Parser AnsiToken
+carriageReturnP = do
+  _ <- char '\r'
+  pure CarriageReturn
 
 -- | Parse a lone ESC (possibly followed by '[') that doesn't start a valid CSI sequence.
 incompleteEscapeP :: Parser AnsiToken
@@ -163,6 +171,15 @@ tokensToChunks style tokens =
              in (finalS, s {chunkText = t} : restChunks)
       SgrSequence params -> go (applySGRParams s params) rest
       OtherCsiSequence -> go s rest
+      CarriageReturn ->
+        -- In a terminal, \r moves the cursor to column 0.
+        -- If followed by plain text, treat it as a line break
+        -- (progress update). Otherwise discard it (terminal noise).
+        case rest of
+          (PlainText _ : _) ->
+            let (finalS, restChunks) = go s rest
+             in (finalS, s {chunkText = "\n"} : restChunks)
+          _ -> go s rest
 
 -- | Parse strict 'Text' containing ANSI escape codes into styled 'Chunk's.
 --
@@ -194,13 +211,17 @@ goSGR s (p : ps)
   | p == 4 = goSGR (s {chunkUnderlining = Just SingleUnderline}) ps
   | p == 5 = goSGR (s {chunkBlinking = Just SlowBlinking}) ps
   | p == 6 = goSGR (s {chunkBlinking = Just RapidBlinking}) ps
-  -- 9 = strikethrough, not in Chunk type, skip
+  | p == 7 = goSGR (s {chunkSwapForegroundBackground = Just True}) ps
+  | p == 8 = goSGR (s {chunkConcealed = Just True}) ps
+  | p == 9 = goSGR (s {chunkStrikethrough = Just True}) ps
   | p == 21 = goSGR (s {chunkUnderlining = Just DoubleUnderline}) ps
   | p == 22 = goSGR (s {chunkConsoleIntensity = Just NormalIntensity}) ps
   | p == 23 = goSGR (s {chunkItalic = Just False}) ps
   | p == 24 = goSGR (s {chunkUnderlining = Just NoUnderline}) ps
   | p == 25 = goSGR (s {chunkBlinking = Just NoBlinking}) ps
-  -- Standard foreground colours (30-37)
+  | p == 27 = goSGR (s {chunkSwapForegroundBackground = Just False}) ps
+  | p == 28 = goSGR (s {chunkConcealed = Just False}) ps
+  | p == 29 = goSGR (s {chunkStrikethrough = Just False}) ps
   | p >= 30 && p <= 37 =
       case terminalColourFromIndex (p - 30) of
         Just tc -> goSGR (s {chunkForeground = Just (Colour8 Dull tc)}) ps
@@ -224,7 +245,8 @@ goSGR s (p : ps)
       _ -> goSGR s ps
   -- Default background
   | p == 49 = goSGR (s {chunkBackground = Nothing}) ps
-  -- Bright foreground colours (90-97)
+  | p == 53 = goSGR (s {chunkOverlined = Just True}) ps
+  | p == 55 = goSGR (s {chunkOverlined = Just False}) ps
   | p >= 90 && p <= 97 =
       case terminalColourFromIndex (p - 90) of
         Just tc -> goSGR (s {chunkForeground = Just (Colour8 Bright tc)}) ps

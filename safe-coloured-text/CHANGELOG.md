@@ -1,5 +1,18 @@
 # Changelog for safe-coloured-text
 
+## [0.4.0.0] - 2026-04-12
+
+### Added
+
+* Strikethrough support (`chunkStrikethrough`, `strikethrough`, SGR 9/29)
+* Reverse video support (`chunkSwapForegroundBackground`, `swapForegroundBackground`, SGR 7/27)
+* Concealed/hidden text support (`chunkConcealed`, `concealed`, SGR 8/28)
+* Overline support (`chunkOverlined`, `overlined`, SGR 53/55)
+
+### Fixed
+
+* `chunkBlinking` is now rendered in `chunkSGR` (was stored but never emitted)
+
 ## [0.3.0.2] - 2024-06-23
 
 ### Added
