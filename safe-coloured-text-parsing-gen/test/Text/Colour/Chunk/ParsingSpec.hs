@@ -130,10 +130,10 @@ spec = do
 
     it "renders OSC 8 hyperlinks, keeping surrounding text" $
       parseAnsiChunks noStyle "warning: \ESC]8;;https://errors.haskell.org/messages/GHC-63394\ESC\\GHC-63394\ESC]8;;\ESC\\ [-Wx-partial]"
-        `shouldBe` ( noStyle {chunkStyleHyperlink = Just ""},
+        `shouldBe` ( noStyle,
                      [ chunk "warning: ",
                        (chunk "GHC-63394") {chunkStyle = noStyle {chunkStyleHyperlink = Just "https://errors.haskell.org/messages/GHC-63394"}},
-                       (chunk " [-Wx-partial]") {chunkStyle = noStyle {chunkStyleHyperlink = Just ""}}
+                       chunk " [-Wx-partial]"
                      ]
                    )
 

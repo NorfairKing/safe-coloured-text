@@ -236,8 +236,9 @@ tokensToChunks style tokens =
              in (finalS, Chunk {chunkText = t, chunkStyle = s} : restChunks)
       SgrSequence params -> go (applySGRParams s params) rest
       OtherCsiSequence -> go s rest
-      OscSequence (OscHyperlink _ url) ->
-        go (s {chunkStyleHyperlink = Just url}) rest
+      OscSequence (OscHyperlink _ url)
+        | Text.null url -> go (s {chunkStyleHyperlink = Nothing}) rest
+        | otherwise -> go (s {chunkStyleHyperlink = Just url}) rest
       OscSequence _ -> go s rest
       CarriageReturn ->
         case rest of
