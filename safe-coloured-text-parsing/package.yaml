@@ -8,6 +8,6 @@ library:
   source-dirs: src
   dependencies:
   - attoparsec
-  - safe-coloured-text >= 0.3
+  - safe-coloured-text >= 0.6
   - text
   - validity
