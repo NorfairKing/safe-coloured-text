@@ -49,6 +49,7 @@ spec = do
             chunkStyleBlinking <- Nothing : map Just [minBound .. maxBound]
             chunkStyleForeground <- mColour
             chunkStyleBackground <- mColour
+            let chunkStyleHyperlink = Nothing
             let chunkText = T.pack string
                 chunkStyle = ChunkStyle {..}
             let boolName label b = if b then label else "non-" <> label
@@ -143,6 +144,7 @@ spec = do
             let chunkStyleBlinking = Nothing
             chunkStyleForeground <- mColour
             chunkStyleBackground <- mColour
+            let chunkStyleHyperlink = Nothing
             let chunkText = T.pack string
                 chunkStyle = ChunkStyle {..}
             let name =
@@ -186,6 +188,7 @@ spec = do
             let chunkStyleBlinking = Nothing
             chunkStyleForeground <- mColour
             chunkStyleBackground <- mColour
+            let chunkStyleHyperlink = Nothing
             let chunkText = T.pack string
                 chunkStyle = ChunkStyle {..}
             let name =

@@ -43,7 +43,11 @@ data ChunkStyle = ChunkStyle
     chunkStyleUnderlining :: !(Maybe Underlining),
     chunkStyleBlinking :: !(Maybe Blinking),
     chunkStyleForeground :: !(Maybe Colour),
-    chunkStyleBackground :: !(Maybe Colour)
+    chunkStyleBackground :: !(Maybe Colour),
+    -- | OSC 8 hyperlink URL, if any.  Not rendered as a terminal escape
+    -- sequence (terminals that support OSC 8 use a separate mechanism);
+    -- consumers such as HTML renderers can use this to emit @\<a href\>@ tags.
+    chunkStyleHyperlink :: !(Maybe Text)
   }
   deriving (Show, Eq, Generic)
 
@@ -57,7 +61,7 @@ chunkWidth = T.length . chunkText
 
 plainStyle :: TerminalCapabilities -> ChunkStyle -> Bool
 plainStyle tc ChunkStyle {..} =
-  let ChunkStyle _ _ _ _ _ _ _ _ _ _ = undefined
+  let ChunkStyle _ _ _ _ _ _ _ _ _ _ _ = undefined
    in and
         [ isNothing chunkStyleItalic,
           isNothing chunkStyleStrikethrough,
@@ -68,7 +72,8 @@ plainStyle tc ChunkStyle {..} =
           isNothing chunkStyleUnderlining,
           isNothing chunkStyleBlinking,
           maybe True (plainColour tc) chunkStyleForeground,
-          maybe True (plainColour tc) chunkStyleBackground
+          maybe True (plainColour tc) chunkStyleBackground,
+          isNothing chunkStyleHyperlink
         ]
 
 plainChunk :: TerminalCapabilities -> Chunk -> Bool
@@ -125,10 +130,26 @@ renderChunkBuilder tc c@Chunk {..} =
     then LTB.fromText chunkText
     else
       mconcat
-        [ renderCSI (SGR (styleSGR tc chunkStyle)),
+        [ maybe mempty renderOsc8Open (chunkStyleHyperlink chunkStyle),
+          renderCSI (SGR (styleSGR tc chunkStyle)),
           LTB.fromText chunkText,
-          renderCSI (SGR [Reset])
+          renderCSI (SGR [Reset]),
+          maybe mempty (const renderOsc8Close) (chunkStyleHyperlink chunkStyle)
         ]
+
+-- | Render an OSC 8 hyperlink open sequence: @ESC]8;;<url>ESC\@.
+-- An empty URL renders the close sequence.
+renderOsc8Open :: Text -> Text.Builder
+renderOsc8Open url =
+  mconcat
+    [ LTB.fromText (T.pack "\ESC]8;;"),
+      LTB.fromText url,
+      LTB.fromText (T.pack "\ESC\\")
+    ]
+
+-- | Render an OSC 8 hyperlink close sequence: @ESC]8;;ESC\@.
+renderOsc8Close :: Text.Builder
+renderOsc8Close = LTB.fromText (T.pack "\ESC]8;;\ESC\\")
 
 styleSGR :: TerminalCapabilities -> ChunkStyle -> [SGR]
 styleSGR tc ChunkStyle {..} =
@@ -166,7 +187,8 @@ noStyle =
       chunkStyleUnderlining = Nothing,
       chunkStyleBlinking = Nothing,
       chunkStyleForeground = Nothing,
-      chunkStyleBackground = Nothing
+      chunkStyleBackground = Nothing,
+      chunkStyleHyperlink = Nothing
     }
 
 fore :: Colour -> Chunk -> Chunk

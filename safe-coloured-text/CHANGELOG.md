@@ -1,5 +1,13 @@
 # Changelog for safe-coloured-text
 
+## [0.6.0.0] - 2026-05-13
+
+### Added
+
+* `chunkStyleHyperlink :: !(Maybe Text)` field in `ChunkStyle` for OSC 8 hyperlink URLs
+* `renderOsc8Open` and `renderOsc8Close` for emitting OSC 8 terminal hyperlink sequences
+* `renderChunkBuilder` now emits OSC 8 sequences when `chunkStyleHyperlink` is set
+
 ## [0.5.0.0] - 2026-04-12
 
 ### Changed

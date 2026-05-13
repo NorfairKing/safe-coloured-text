@@ -12,6 +12,8 @@
 * OSC sequences are now parsed and tokenized rather than leaking as plain
   text (fixes rendering of GHC warning messages that include OSC 8
   hyperlinks to error documentation)
+* `tokensToChunks` now threads OSC 8 hyperlink URLs into `chunkStyleHyperlink`
+  (requires `safe-coloured-text` 0.6.0.0)
 
 ## [0.0.0.0] - 2026-04-12
 
