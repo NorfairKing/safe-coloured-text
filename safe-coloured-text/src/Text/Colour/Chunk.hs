@@ -44,9 +44,8 @@ data ChunkStyle = ChunkStyle
     chunkStyleBlinking :: !(Maybe Blinking),
     chunkStyleForeground :: !(Maybe Colour),
     chunkStyleBackground :: !(Maybe Colour),
-    -- | OSC 8 hyperlink URL, if any.  Not rendered as a terminal escape
-    -- sequence (terminals that support OSC 8 use a separate mechanism);
-    -- consumers such as HTML renderers can use this to emit @\<a href\>@ tags.
+    -- | OSC 8 hyperlink URL, if any.
+    -- Rendered as @ESC]8;;\<url\>ESC\\@ before the text and @ESC]8;;ESC\\@ after.
     chunkStyleHyperlink :: !(Maybe Text)
   }
   deriving (Show, Eq, Generic)
