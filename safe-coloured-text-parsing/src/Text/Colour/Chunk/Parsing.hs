@@ -34,6 +34,7 @@ module Text.Colour.Chunk.Parsing
 where
 
 import Control.Applicative ((<|>))
+import Control.Monad (void)
 import Data.Attoparsec.Text
   ( Parser,
     anyChar,
@@ -65,6 +66,9 @@ data AnsiToken
     SgrSequence ![Word8]
   | -- | A non-SGR CSI sequence (to be discarded)
     OtherCsiSequence
+  | -- | An OSC (Operating System Command) sequence (to be discarded).
+    -- Begins with @ESC ]@ and ends with the String Terminator @ESC \@ or @BEL@.
+    OscSequence
   | -- | A carriage return (@\r@)
     CarriageReturn
   deriving (Show, Eq, Generic)
@@ -94,10 +98,10 @@ parseAnsiTokensLazy = go
               -- non-empty input (incompleteEscapeP and plainTextP are catch-alls).
               [PlainText (Lazy.toStrict remaining)]
 
--- | Parse a single ANSI token: a CSI sequence, a bare ESC, a carriage
--- return, or plain text.
+-- | Parse a single ANSI token: a CSI sequence, an OSC sequence, a bare ESC,
+-- a carriage return, or plain text.
 ansiTokenP :: Parser AnsiToken
-ansiTokenP = csiSequenceP <|> incompleteEscapeP <|> carriageReturnP <|> plainTextP
+ansiTokenP = csiSequenceP <|> oscSequenceP <|> incompleteEscapeP <|> carriageReturnP <|> plainTextP
 
 plainTextP :: Parser AnsiToken
 plainTextP = PlainText <$> takeWhile1 (\c -> c /= '\ESC' && c /= '\r')
@@ -124,6 +128,19 @@ csiSequenceP = do
     if finalByte == 'm' && not hasIntermediateBytes
       then SgrSequence params
       else OtherCsiSequence
+
+-- | Parse an OSC (Operating System Command) sequence.
+-- An OSC sequence begins with @ESC ]@ and ends with either the
+-- String Terminator @ESC \@ or @BEL@ (@\a@).
+-- If no terminator is found before end of input the whole remainder
+-- is consumed and emitted as 'OscSequence'.
+oscSequenceP :: Parser AnsiToken
+oscSequenceP = do
+  _ <- char '\ESC'
+  _ <- char ']'
+  _ <- many' (satisfy (\c -> c /= '\ESC' && c /= '\BEL'))
+  _ <- (char '\ESC' >> char '\\' >> pure ()) <|> void (char '\BEL') <|> pure ()
+  pure OscSequence
 
 csiParamsP :: Parser ([Word8], Bool)
 csiParamsP = do
@@ -171,6 +188,7 @@ tokensToChunks style tokens =
              in (finalS, Chunk {chunkText = t, chunkStyle = s} : restChunks)
       SgrSequence params -> go (applySGRParams s params) rest
       OtherCsiSequence -> go s rest
+      OscSequence -> go s rest
       CarriageReturn ->
         case rest of
           (PlainText _ : _) ->
