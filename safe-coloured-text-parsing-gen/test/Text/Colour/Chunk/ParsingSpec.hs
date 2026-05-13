@@ -1,3 +1,4 @@
+{-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE TypeApplications #-}
 
@@ -17,6 +18,7 @@ import Text.Colour.Gen ()
 
 spec :: Spec
 spec = do
+  genValidSpec @OscCommand
   genValidSpec @AnsiToken
 
   describe "parseAnsiTokens" $ do
@@ -55,17 +57,24 @@ spec = do
     it "tokenizes empty input" $
       parseAnsiTokens "" `shouldBe` []
 
-    it "tokenizes an OSC sequence with ST terminator" $
+    it "tokenizes an OSC 8 hyperlink open with ST terminator" $
       parseAnsiTokens "\ESC]8;;https://example.com\ESC\\"
-        `shouldBe` [OscSequence]
+        `shouldBe` [OscSequence (OscHyperlink "" "https://example.com")]
 
-    it "tokenizes an OSC sequence with BEL terminator" $
+    it "tokenizes an OSC 8 hyperlink close with ST terminator" $
+      parseAnsiTokens "\ESC]8;;\ESC\\"
+        `shouldBe` [OscSequence (OscHyperlink "" "")]
+
+    it "tokenizes an OSC 0 window title with BEL terminator" $
       parseAnsiTokens "\ESC]0;My Title\BEL"
-        `shouldBe` [OscSequence]
+        `shouldBe` [OscSequence (OscOther 0 "My Title")]
 
     it "tokenizes an OSC 8 hyperlink around text" $
       parseAnsiTokens "\ESC]8;;https://errors.haskell.org/messages/GHC-63394\ESC\\GHC-63394\ESC]8;;\ESC\\"
-        `shouldBe` [OscSequence, PlainText "GHC-63394", OscSequence]
+        `shouldBe` [ OscSequence (OscHyperlink "" "https://errors.haskell.org/messages/GHC-63394"),
+                     PlainText "GHC-63394",
+                     OscSequence (OscHyperlink "" "")
+                   ]
 
   describe "parseAnsiTokensLazy" $ do
     it "produces the same tokens as strict parsing" $
@@ -119,7 +128,7 @@ spec = do
       parseAnsiChunks noStyle "before\ESC[2Jafter"
         `shouldBe` (noStyle, [chunk "before", chunk "after"])
 
-    it "strips OSC sequences" $
+    it "discards OSC sequences, keeping surrounding text" $
       parseAnsiChunks noStyle "warning: \ESC]8;;https://errors.haskell.org/messages/GHC-63394\ESC\\GHC-63394\ESC]8;;\ESC\\ [-Wx-partial]"
         `shouldBe` (noStyle, [chunk "warning: ", chunk "GHC-63394", chunk " [-Wx-partial]"])
 
@@ -171,36 +180,9 @@ spec = do
             (_, parsed) = parseAnsiChunks noStyle rendered
          in parsed `shouldBe` [c']
 
--- | Strip all ANSI CSI and OSC sequences from text.
+-- | Strip all ANSI escape sequences from text, keeping only plain text.
 stripAnsi :: Text.Text -> Text.Text
-stripAnsi t
-  | Text.null t = t
-  | otherwise =
-      let (beforeCsi, afterCsi) = Text.breakOn "\ESC[" t
-          (beforeOsc, afterOsc) = Text.breakOn "\ESC]" t
-       in if Text.null afterCsi && Text.null afterOsc
-            then t
-            else
-              if Text.null afterOsc || (not (Text.null afterCsi) && Text.length beforeCsi <= Text.length beforeOsc)
-                then stripCsi t
-                else stripOsc t
-  where
-    stripCsi t' = case Text.breakOn "\ESC[" t' of
-      (prefix, suffix)
-        | Text.null suffix -> prefix
-        | otherwise ->
-            let rest = Text.drop 2 suffix
-             in case Text.findIndex (\c -> c >= '\x40' && c <= '\x7E') rest of
-                  Nothing -> prefix <> suffix
-                  Just i -> prefix <> stripAnsi (Text.drop (i + 1) rest)
-    stripOsc t' = case Text.breakOn "\ESC]" t' of
-      (prefix, suffix)
-        | Text.null suffix -> prefix
-        | otherwise ->
-            let rest = Text.drop 2 suffix
-                afterSt = case Text.breakOn "\ESC\\" rest of
-                  (_, stSuffix) | not (Text.null stSuffix) -> Text.drop 2 stSuffix
-                  _ -> case Text.breakOn "\BEL" rest of
-                    (_, belSuffix) | not (Text.null belSuffix) -> Text.drop 1 belSuffix
-                    _ -> ""
-             in prefix <> stripAnsi afterSt
+stripAnsi =
+  Text.concat
+    . map (\case PlainText t -> t; _ -> "")
+    . parseAnsiTokens

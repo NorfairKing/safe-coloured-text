@@ -24,6 +24,7 @@ module Text.Colour.Chunk.Parsing
 
     -- ** Layer 1: Tokenization
     AnsiToken (..),
+    OscCommand (..),
     ansiTokenP,
     parseAnsiTokens,
     parseAnsiTokensLazy,
@@ -58,6 +59,19 @@ import Text.Colour.Chunk
 import Text.Colour.Code
 import Text.Read (readMaybe)
 
+-- | The payload of an OSC (Operating System Command) escape sequence.
+data OscCommand
+  = -- | OSC 8 hyperlink.
+    -- @'OscHyperlink' params uri@: @params@ are optional link attributes
+    -- (commonly empty); @uri@ is the target URL, or empty to close the link.
+    OscHyperlink !Text !Text
+  | -- | Any other OSC sequence, identified by its command number and
+    -- the raw parameter string that followed it.
+    OscOther !Word !Text
+  deriving (Show, Eq, Generic)
+
+instance Validity OscCommand
+
 -- | A token in a stream of text with ANSI escape codes.
 data AnsiToken
   = -- | Plain text (no escape codes)
@@ -66,9 +80,9 @@ data AnsiToken
     SgrSequence ![Word8]
   | -- | A non-SGR CSI sequence (to be discarded)
     OtherCsiSequence
-  | -- | An OSC (Operating System Command) sequence (to be discarded).
+  | -- | An OSC (Operating System Command) sequence.
     -- Begins with @ESC ]@ and ends with the String Terminator @ESC \@ or @BEL@.
-    OscSequence
+    OscSequence !OscCommand
   | -- | A carriage return (@\r@)
     CarriageReturn
   deriving (Show, Eq, Generic)
@@ -130,17 +144,51 @@ csiSequenceP = do
       else OtherCsiSequence
 
 -- | Parse an OSC (Operating System Command) sequence.
--- An OSC sequence begins with @ESC ]@ and ends with either the
--- String Terminator @ESC \@ or @BEL@ (@\a@).
+-- An OSC sequence begins with @ESC ]@, followed by a numeric command,
+-- a @;@, a parameter string, and ends with the String Terminator @ESC \@
+-- or @BEL@ (@\a@).
 -- If no terminator is found before end of input the whole remainder
 -- is consumed and emitted as 'OscSequence'.
 oscSequenceP :: Parser AnsiToken
 oscSequenceP = do
   _ <- char '\ESC'
   _ <- char ']'
-  _ <- many' (satisfy (\c -> c /= '\ESC' && c /= '\BEL'))
-  _ <- (char '\ESC' >> char '\\' >> pure ()) <|> void (char '\BEL') <|> pure ()
-  pure OscSequence
+  cmd <- oscCommandNumberP
+  _ <- void (char ';') <|> pure ()
+  params <- oscParamsP
+  oscStringTerminatorP
+  pure $ OscSequence $ case cmd of
+    8 -> case Text.breakOn ";" params of
+      (linkParams, rest)
+        | not (Text.null rest) -> OscHyperlink linkParams (Text.drop 1 rest)
+      _ -> OscHyperlink "" params
+    _ -> OscOther cmd params
+
+-- | Parse an OSC command number (a decimal integer).
+-- Returns 0 if no digits are present (bare @ESC]@).
+oscCommandNumberP :: Parser Word
+oscCommandNumberP =
+  ( do
+      digits <- takeWhile1 isDigit
+      case readMaybe (Text.unpack digits) of
+        Just n -> pure n
+        Nothing -> pure 0
+  )
+    <|> pure 0
+
+-- | Parse the OSC parameter string: everything up to the string terminator.
+oscParamsP :: Parser Text
+oscParamsP = do
+  chunks <- many' (satisfy (\c -> c /= '\ESC' && c /= '\BEL'))
+  pure $ Text.pack chunks
+
+-- | Consume the OSC string terminator: @ESC \@ or @BEL@.
+-- If neither is present (end of input), succeeds consuming nothing.
+oscStringTerminatorP :: Parser ()
+oscStringTerminatorP =
+  (char '\ESC' >> void (char '\\'))
+    <|> void (char '\BEL')
+    <|> pure ()
 
 csiParamsP :: Parser ([Word8], Bool)
 csiParamsP = do
@@ -188,7 +236,7 @@ tokensToChunks style tokens =
              in (finalS, Chunk {chunkText = t, chunkStyle = s} : restChunks)
       SgrSequence params -> go (applySGRParams s params) rest
       OtherCsiSequence -> go s rest
-      OscSequence -> go s rest
+      OscSequence _ -> go s rest
       CarriageReturn ->
         case rest of
           (PlainText _ : _) ->
