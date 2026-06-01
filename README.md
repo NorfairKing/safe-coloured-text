@@ -1,5 +1,7 @@
 # Safe Coloured Text
 
+[![NixCI](https://staging.nix-ci.com/badge/gh:NorfairKing:safe-coloured-text)](https://staging.nix-ci.com/gh:NorfairKing:safe-coloured-text)
+
 ## Requirements / Design goals
 
 * Use `String`/`Text`/`ByteString` correctly: Some things are strings of characters, some things are text, some things are bytes. Those are not the same.
