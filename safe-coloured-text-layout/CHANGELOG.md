@@ -1,5 +1,12 @@
 # Changelog for safe-coloured-text-layout
 
+## [0.2.0.2] - 2026-07-24
+
+### Changed
+
+* Build against `safe-coloured-text >= 0.6`, which separates `ChunkStyle`
+  from `Chunk`.
+
 ## [0.2.0.1] - 2024-08-03
 
 ### Changed
