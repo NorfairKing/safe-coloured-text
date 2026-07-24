@@ -8,5 +8,7 @@ mkDerivation {
   libraryHaskellDepends = [
     attoparsec base safe-coloured-text text validity
   ];
-  license = "unknown";
+  homepage = "https://github.com/NorfairKing/safe-coloured-text#readme";
+  description = "Parse coloured text";
+  license = lib.licenses.mit;
 }

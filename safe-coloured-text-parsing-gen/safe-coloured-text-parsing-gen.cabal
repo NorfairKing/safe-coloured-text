@@ -6,7 +6,23 @@ cabal-version: 1.12
 
 name:           safe-coloured-text-parsing-gen
 version:        0.0.0.0
+synopsis:       Generators for safe-coloured-text-parsing
+category:       User Interfaces
+homepage:       https://github.com/NorfairKing/safe-coloured-text#readme
+bug-reports:    https://github.com/NorfairKing/safe-coloured-text/issues
+author:         Tom Sydney Kerckhove
+maintainer:     syd@cs-syd.eu
+copyright:      Copyright (c) 2026 Tom Sydney Kerckhove
+license:        MIT
+license-file:   LICENSE
 build-type:     Simple
+extra-source-files:
+    LICENSE
+    CHANGELOG.md
+
+source-repository head
+  type: git
+  location: https://github.com/NorfairKing/safe-coloured-text
 
 library
   exposed-modules:

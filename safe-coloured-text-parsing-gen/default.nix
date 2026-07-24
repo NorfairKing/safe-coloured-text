@@ -14,5 +14,7 @@ mkDerivation {
     safe-coloured-text-gen safe-coloured-text-parsing sydtest text
   ];
   testToolDepends = [ sydtest-discover ];
-  license = "unknown";
+  homepage = "https://github.com/NorfairKing/safe-coloured-text#readme";
+  description = "Generators for safe-coloured-text-parsing";
+  license = lib.licenses.mit;
 }

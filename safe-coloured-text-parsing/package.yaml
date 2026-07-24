@@ -1,5 +1,16 @@
 name: safe-coloured-text-parsing
 version: 0.1.0.0
+github: "NorfairKing/safe-coloured-text"
+license: MIT
+category: User Interfaces
+author: "Tom Sydney Kerckhove"
+maintainer: "syd@cs-syd.eu"
+copyright: "Copyright (c) 2026 Tom Sydney Kerckhove"
+synopsis: Parse coloured text
+
+extra-source-files:
+- LICENSE
+- CHANGELOG.md
 
 dependencies:
 - base >= 4.7 && < 5
